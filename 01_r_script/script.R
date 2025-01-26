@@ -212,7 +212,7 @@ for (year in years) {
 
 # Analyze data based on transportation mode (DISAGMOT).
 # Freight Value by Mode Across Years
-# Create a named vector mapping the transportation mode codes to their descriptions
+# mapp the transportation mode codes to their descriptions
 mode_description <- c(
   "1" = "Vessel",
   "3" = "Air",
