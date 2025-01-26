@@ -2,6 +2,8 @@
 # load libraries
 library(janitor)
 library(dplyr)
+library(ggplot2)
+library(scales)
 
 # load the data
 data_2024 <- read.csv('./00_raw_data/2024.csv')
@@ -140,9 +142,6 @@ print(yearly_statistics)
 
 
 # Visualize the data
-library(ggplot2)
-library(scales)
-
 # freight value by each year
 ggplot(data, aes(x = YEAR, y = VALUE / 1e6, fill = YEAR)) +
   geom_bar(stat = "identity") +
@@ -176,7 +175,7 @@ analyse_yearly_data <- function(data, year) {
   
   # Plot the data with line connecting dots and formatted Y-axis
   ggplot(monthly_summary, aes(x = Month_Label, y = Total_Value)) +
-    geom_line(color = "blue", size = 1.2) +  # Line connecting the dots
+    geom_line(color = "blue", linewidth = 1.2) +  # Line connecting the dots
     geom_point(color = "darkred", size = 3) +  # Red dots
     scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "M", accuracy = 0.01)) +  # Round Y-axis to millions
     labs(
@@ -225,7 +224,7 @@ mode_description <- c(
 )
 
 # Plotting the Freight Value by Mode Across Years
-ggplot(data, aes(x = YEAR, y = VALUE / 1e6, fill = factor(DISAGMOT))) +
+transportation_mode <- ggplot(data, aes(x = YEAR, y = VALUE / 1e6, fill = factor(DISAGMOT))) +
   geom_bar(stat = "identity", position = "dodge") +
   labs(
     title = "Freight Value by Transportation Mode and Year",
@@ -239,18 +238,11 @@ ggplot(data, aes(x = YEAR, y = VALUE / 1e6, fill = factor(DISAGMOT))) +
     name = "Transportation Mode"
   )
 
+print(transportation_mode)
 
 
 
-
-# Freight weight by US States
-
-library(dplyr)
-library(ggplot2)
-
-# List of years to process
-years <- c(2020, 2021, 2022, 2023, 2024)
-
+# Ship weight by US States
 # Loop through each year to create summaries and plots
 for (year in years) {
   # Filter data for the current year
@@ -262,7 +254,7 @@ for (year in years) {
     summarise(Total_ShipWt = sum(SHIPWT, na.rm = TRUE)) %>%
     arrange(desc(Total_ShipWt))  # Sort by total freight weight
   
-  # Limit to top 10 states for better readability (you can adjust this number)
+  # Limit to top 10 states for better readability
   state_freight_summary <- head(state_freight_summary, 10)
   
   # Create a bar plot of the freight weight by US state for the current year
@@ -270,14 +262,14 @@ for (year in years) {
     geom_col(fill = "steelblue") +   # Bar color
     coord_flip() +                   # Flip the bars horizontally
     labs(
-      title = paste("Total Freight Weight by US State (", year, ")", sep = ""),
+      title = paste("Total Ship Weight by US State (", year, ")", sep = ""),
       x = "State",
-      y = "Weight (in thousands)"
+      y = "Weight (in thousands of kilograms)"
     ) +
     theme_minimal() +                # Simple clean theme
     theme(
       axis.text.x = element_text(size = 10),  # Adjust text size for better legibility
-      axis.text.y = element_text(size = 10),   # Adjust y-axis text size
+      axis.text.y = element_text(size = 10),  # Adjust y-axis text size
       plot.margin = margin(10, 50, 10, 10)    # Increase the space around the plot to avoid cutting off labels
     )
   
@@ -289,8 +281,17 @@ for (year in years) {
 
 
 # Freight Charges vs Shipment charges
-# List of years to process
-years <- c(2020, 2021, 2022, 2023, 2024)
+# Mapping of transportation mode codes to descriptions
+mode_description <- c(
+  "1" = "Vessel",
+  "3" = "Air",
+  "4" = "Mail (U.S. Postal Service)",
+  "5" = "Truck",
+  "6" = "Rail",
+  "7" = "Pipeline",
+  "8" = "Other",
+  "9" = "Foreign Trade Zones (FTZs)"
+)
 
 # Loop through each year to create bar plots of aggregated data
 for (year in years) {
@@ -303,16 +304,19 @@ for (year in years) {
     summarise(
       Total_ShipWt = sum(SHIPWT, na.rm = TRUE),
       Total_Freight_Charges = sum(FREIGHT_CHARGES, na.rm = TRUE)
+    ) %>%
+    mutate(
+      Mode = factor(DISAGMOT, levels = names(mode_description), labels = mode_description)  # Map codes to descriptions
     )
   
   # Create a bar plot comparing Freight Charges and Shipment Weight for the current year
-  plot <- ggplot(aggregated_data, aes(x = DISAGMOT)) +
+  plot <- ggplot(aggregated_data, aes(x = Mode)) +
     geom_bar(aes(y = Total_ShipWt / 1e3, fill = "Shipment Weight"), stat = "identity", position = "dodge") +
     geom_bar(aes(y = Total_Freight_Charges / 1e3, fill = "Freight Charges"), stat = "identity", position = "dodge") +
     labs(
       title = paste("Freight Charges vs Shipment Weight by Transportation Mode (", year, ")", sep = ""),
       x = "Transportation Mode",
-      y = "Amount (in thousands)"
+      y = "Amount (in USD)"
     ) +
     scale_fill_manual(values = c("Shipment Weight" = "steelblue", "Freight Charges" = "darkorange")) +
     theme_minimal() +
@@ -329,6 +333,12 @@ for (year in years) {
 # List of years to process
 years <- c(2020, 2021, 2022, 2023, 2024)
 
+# Create a mapping of country codes to country names
+country_names <- c(
+  "1220" = "Canada",
+  "2010" = "Mexico"
+)
+
 # Loop through each year to create summaries and plots
 for (year in years) {
   # Filter the data for the current year
@@ -337,10 +347,11 @@ for (year in years) {
   # Summarize the total Freight Value (VALUE) by Country
   country_summary <- yearly_data %>%
     group_by(COUNTRY) %>%
-    summarise(Total_Value = sum(VALUE, na.rm = TRUE))
+    summarise(Total_Value = sum(VALUE, na.rm = TRUE)) %>%
+    mutate(Country_Name = country_names[as.character(COUNTRY)])  # Map codes to names
   
   # Create a bar plot of Freight Value by Country for the current year
-  plot <- ggplot(country_summary, aes(x = reorder(COUNTRY, Total_Value), y = Total_Value / 1e6)) +
+  plot <- ggplot(country_summary, aes(x = reorder(Country_Name, Total_Value), y = Total_Value / 1e6)) +
     geom_bar(stat = "identity", fill = "darkgreen") +   # Create the bars
     coord_flip() +                                      # Flip the bars horizontally
     labs(
@@ -348,11 +359,12 @@ for (year in years) {
       x = "Country",
       y = "Value (in millions)"
     ) +
-    theme_minimal() # Clean theme
+    theme_minimal()                                     # Clean theme
   
   # Print the plot for the current year
   print(plot)
 }
+
 
 
 
