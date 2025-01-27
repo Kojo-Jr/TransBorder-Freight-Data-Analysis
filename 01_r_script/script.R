@@ -108,6 +108,21 @@ data <- bind_rows(data_2020, data_2021, data_2022, data_2023, data_2024)
 # To avoid scientific notation
 options(scipen = 999)
 
+# summary statistics from year 2020 to 2024
+summary_statistics <- data %>%
+  summarise(
+    Total_Value = sum(VALUE, na.rm = TRUE),
+    Total_ShipWt = sum(SHIPWT, na.rm = TRUE),
+    Total_Freight_Charges = sum(FREIGHT_CHARGES, na.rm = TRUE),
+    Avg_Value = mean(VALUE, na.rm = TRUE),
+    Avg_ShipWt = mean(SHIPWT, na.rm = TRUE),
+    Avg_Freight_Charges = mean(FREIGHT_CHARGES, na.rm = TRUE)
+  )
+
+print("Summary statistics:")
+print(summary_statistics)
+
+
 # Grouping data by YEAR and calculating yearly statistics
 yearly_statistics <- data %>%
   group_by(YEAR) %>%
