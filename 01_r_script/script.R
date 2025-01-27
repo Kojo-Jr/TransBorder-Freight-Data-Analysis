@@ -21,6 +21,7 @@ data_2022 <- data_2022[ , -1]
 data_2021 <- data_2021[ , -1]
 data_2020 <- data_2020[ , -1]
 
+
 # Clean the column names for each dataset
 # data_2024 <- clean_names(data_2024)
 # data_2023 <- clean_names(data_2023)
@@ -143,25 +144,14 @@ print(yearly_statistics)
 
 # Visualize the data
 # freight value by each year
-ggplot(data, aes(x = YEAR, y = VALUE / 1e6, fill = YEAR)) +
-  geom_bar(stat = "identity") +
-  geom_text(aes(label = number(VALUE / 1e6, scale = 1, accuracy = 0.01)), vjust = -0.5) + 
-  labs(
-    title = "Total Freight Value by Year",
-    x = "Year",
-    y = "Value (in millions)"
-  ) +
-  scale_y_continuous(labels = label_number(accuracy = 0.01)) +
-  theme_minimal()
-
-# List of years to process
-years <- c(2020, 2021, 2022, 2023, 2024)
+# Load necessary libraries
+library(dplyr)
+library(ggplot2)
 
 # Function to process and visualize data for a specific year
 analyse_yearly_data <- function(data, year) {
-  
   # Filter data for the given year and aggregate by month
-  monthly_summary <- data_2020 %>%
+   monthly_summary <- data %>%
     filter(YEAR == as.character(year)) %>%
     group_by(MONTH) %>%
     summarise(Total_Value = sum(VALUE, na.rm = TRUE)) %>%
@@ -169,8 +159,7 @@ analyse_yearly_data <- function(data, year) {
       Month_Label = factor(MONTH, levels = 1:12, labels = month.name)
     ) %>%
     arrange(MONTH)
-  
-  # Print the monthly summary
+  # Print summary
   print(monthly_summary)
   
   # Plot the data with line connecting dots and formatted Y-axis
@@ -187,13 +176,13 @@ analyse_yearly_data <- function(data, year) {
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 }
 
-# Loop through each year and generate the plot
+# Run the analysis for each year
+years <- c(2020, 2021, 2022, 2023, 2024)
 for (year in years) {
   print(paste("Processing data for year:", year))
-  
-  # Generate and display the plot for the year
-  analyse_yearly_data(data, year)
+  print(analyse_yearly_data(data, year))
 }
+
 
 
 # distribution of data
@@ -388,26 +377,75 @@ for (year in years) {
   print(correlation_matrix)
 }
 
+# Visualise the correlation
+# Install required libraries
+library(ggplot2)
+library(reshape2)
+
+# List of years
+years <- c(2020, 2021, 2022, 2023, 2024)
+
+# Initialise an empty data frame for storing correlation data
+correlation_data <- data.frame()
+
+# Loop through each year to calculate correlations
+for (year in years) {
+  yearly_data <- data %>% filter(YEAR == as.character(year))
+  corr_matrix <- yearly_data %>%
+    select(VALUE, SHIPWT, FREIGHT_CHARGES) %>%
+    cor(use = "complete.obs")
+  
+  # Convert the correlation matrix to a long format
+  melted_corr <- melt(corr_matrix)
+  melted_corr$Year <- year
+  
+  # Append to the correlation_data data frame
+  correlation_data <- rbind(correlation_data, melted_corr)
+}
+
+# Round the correlation values to 2 decimal places
+correlation_data$value <- round(correlation_data$value, 2)
+
+# Plot heatmap with labels
+ggplot(correlation_data, aes(x = Var1, y = Var2, fill = value)) +
+  geom_tile() +
+  geom_text(aes(label = value), colour = "black", size = 3) +  # to add text labels
+  facet_wrap(~ Year) +
+  scale_fill_gradient2(
+    low = "blue", mid = "white", high = "red",
+    midpoint = 0, limits = c(-1, 1),
+    name = "Correlation"
+  ) +
+  labs(
+    title = "Correlation Heatmaps (2020–2024) with Values",
+    x = "Variable", y = "Variable"
+  ) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 12),  #facet title size
+    axis.text.x = element_text(angle = 45, hjust = 1)  # to Rotate x-axis labels
+  )
+
 
 
 # High Freight Charges
 # Identify shipments with unusually high freight charges for their weight.
 # List of years to process
-years <- c(2020, 2021, 2022, 2023, 2024)
+# years <- c(2020, 2021, 2022, 2023, 2024)
 
 # Loop through each year to identify high freight charges for each year
-for (year in years) {
+# for (year in years) {
   # Filter the data for the current year
-  yearly_data <- data %>% filter(YEAR == as.character(year))
+#  yearly_data <- data %>% filter(YEAR == as.character(year))
   
   # Identify shipments with unusually high freight charges for their weight in the current year
-  high_charges <- yearly_data %>%
-    filter(FREIGHT_CHARGES / SHIPWT > quantile(FREIGHT_CHARGES / SHIPWT, 0.95, na.rm = TRUE))
+#  high_charges <- yearly_data %>%
+ #   filter(FREIGHT_CHARGES / SHIPWT > quantile(FREIGHT_CHARGES / SHIPWT, 0.95, na.rm = TRUE))
   
   # Print the result for the current year
-  print(paste("High Freight Charges for Year:", year))
-  print(high_charges)
-}
+ # print(paste("High Freight Charges for Year:", year))
+#  print(high_charges)
+#}
 
 
 # Yearly trend Analysis
