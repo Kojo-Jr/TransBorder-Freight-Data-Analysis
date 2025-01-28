@@ -12,12 +12,12 @@ This project analyses transportation data from the **Bureau of Transportation St
 
 ## Methodology
 The analysis follows the **CRISP-DM** framework:
-1. Business Understanding
-2. Data Understanding
-3. Data Preparation
-4. Modelling
-5. Evaluation
-6. Deployment
+1. Business Understanding: Defining the project objectives and data-related goals.
+2. Data Understanding: Exploring and assessing the quality of the data.
+3. Data Preparation: Cleaning and transforming data for analysis.
+4. Modelling: Applying analytical and machine learning techniques (where applicable).
+5. Evaluation: Interpreting results and validating insights.
+6. Deployment: Communicating findings and actionable strategies to stakeholders.
 
 ## Tools
 - **R**: Data analysis and visualisation.
