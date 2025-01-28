@@ -27,7 +27,7 @@ The analysis follows the **CRISP-DM** framework:
 7. Deployment: Communicating findings and actionable strategies to stakeholders.
 
 ## Tools
-- **R**: Data analysis and visualisation.
+- **RStudio**: Data analysis and visualisation.
 - **Git**: Version control.
 
 ## Outcomes
