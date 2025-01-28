@@ -4,6 +4,7 @@ library(janitor)
 library(dplyr)
 library(ggplot2)
 library(scales)
+library(reshape2)
 
 # load the data
 data_2024 <- read.csv('./00_raw_data/2024.csv')
@@ -38,37 +39,56 @@ colnames(data_2024)
 
 
 # Check for missing values
-colSums(is.na(data_2020))
-colSums(is.na(data_2021))
-colSums(is.na(data_2022))
-colSums(is.na(data_2023))
-colSums(is.na(data_2024))
+colSums(is.na(data_2020) | data_2020 == "")
+colSums(is.na(data_2021) | data_2021 == "")
+colSums(is.na(data_2022) | data_2022 == "")
+colSums(is.na(data_2023) | data_2023 == "")
+colSums(is.na(data_2024) | data_2024 == "")
 
 # replace all empty cells with  NA
 #data$MEXSTATE <- ifelse(is.na(data$MEXSTATE), "", data$MEXSTATE)
 #data$DF <- ifelse(is.na(data$DF), "", data$DF)
+data_2020$USASTATE[data_2020$USASTATE == ""] <- NA
 data_2020$MEXSTATE[data_2020$MEXSTATE == ""] <- NA
+data_2020$DEPE[data_2020$DEPE == ""] <- NA
 data_2020$DF[data_2020$DF == ""] <- NA
 data_2020$CANPROV[data_2020$CANPROV == ""] <- NA
 
+data_2021$USASTATE[data_2021$USASTATE == ""] <- NA
 data_2021$MEXSTATE[data_2021$MEXSTATE == ""] <- NA
+data_2021$DEPE[data_2021$DEPE == ""] <- NA
 data_2021$DF[data_2021$DF == ""] <- NA
 data_2021$CANPROV[data_2021$CANPROV == ""] <- NA
 
+data_2022$USASTATE[data_2022$USASTATE == ""] <- NA
 data_2022$MEXSTATE[data_2022$MEXSTATE == ""] <- NA
+data_2022$DEPE[data_2022$DEPE == ""] <- NA
 data_2022$DF[data_2022$DF == ""] <- NA
 data_2022$CANPROV[data_2022$CANPROV == ""] <- NA
 
+data_2023$USASTATE[data_2023$USASTATE == ""] <- NA
 data_2023$MEXSTATE[data_2023$MEXSTATE == ""] <- NA
+data_2023$DEPE[data_2023$DEPE == ""] <- NA
 data_2023$DF[data_2023$DF == ""] <- NA
 data_2023$CANPROV[data_2023$CANPROV == ""] <- NA
 
+data_2024$USASTATE[data_2024$USASTATE == ""] <- NA
 data_2024$MEXSTATE[data_2024$MEXSTATE == ""] <- NA
+data_2024$DEPE[data_2024$DEPE == ""] <- NA
 data_2024$DF[data_2024$DF == ""] <- NA
 data_2024$CANPROV[data_2024$CANPROV == ""] <- NA
 
+# Check to see empty cells are replaces
+rowSums(is.na(data_2021) | data_2020 == "") > 0
+rowSums(is.na(data_2021) | data_2021 == "") > 0
+rowSums(is.na(data_2021) | data_2022 == "") > 0
+rowSums(is.na(data_2021) | data_2023 == "") > 0
+rowSums(is.na(data_2021) | data_2024 == "") > 0
 
-# view structure of the data 
+# rowSums(is.na(data_2021) | data_2021 == "") == ncol(data_2021)
+
+
+# View structure of the data 
 str(data_2020)
 str(data_2021)
 str(data_2022)
@@ -159,10 +179,6 @@ print(yearly_statistics)
 
 # Visualize the data
 # freight value by each year
-# Load necessary libraries
-library(dplyr)
-library(ggplot2)
-
 # Function to process and visualize data for a specific year
 analyse_yearly_data <- function(data, year) {
   # Filter data for the given year and aggregate by month
@@ -259,7 +275,9 @@ for (year in years) {
     arrange(desc(Total_ShipWt))  # Sort by total freight weight
   
   # Limit to top 10 states for better readability
-  state_freight_summary <- head(state_freight_summary, 10)
+  state_freight_summary <- head(state_freight_summary, 10) %>% 
+    filter(!is.na(USASTATE) & USASTATE != "")
+    
   
   # Create a bar plot of the freight weight by US state for the current year
   plot <- ggplot(state_freight_summary, aes(x = reorder(USASTATE, Total_ShipWt), y = Total_ShipWt / 1e3)) +
@@ -392,11 +410,8 @@ for (year in years) {
   print(correlation_matrix)
 }
 
-# Visualise the correlation
-# Install required libraries
-library(ggplot2)
-library(reshape2)
 
+# Visualise the correlation
 # List of years
 years <- c(2020, 2021, 2022, 2023, 2024)
 
@@ -477,5 +492,59 @@ ggplot(yearly_trends, aes(x = as.factor(YEAR), y = Total_Value / 1e6)) +
     y = "Value (in millions)"
   ) +
   theme_minimal()
+
+
+
+
+# Trade Values for MEXSTATE AND CANPROV And USASTATE(USA)
+# Prepare data for MEXSTATE (Mexico) and CANPROV (Canada) and USASTATE (USA)
+mexico_trade <- data %>%
+  filter(!is.na(MEXSTATE) & MEXSTATE != "") %>%  # Select rows with MEXSTATE (Mexico trade)
+  group_by(TRDTYPE, MEXSTATE) %>%
+  summarise(Total_Value = sum(VALUE, na.rm = TRUE)) %>%
+  mutate(Country = "Mexico")
+
+canada_trade <- data %>%
+  filter(!is.na(CANPROV) & CANPROV != "") %>%  # Select rows with CANPROV (Canada trade)
+  group_by(TRDTYPE, CANPROV) %>%
+  summarise(Total_Value = sum(VALUE, na.rm = TRUE)) %>%
+  mutate(Country = "Canada")
+
+usa_trade <- data %>% 
+  filter(!is.na(USASTATE) & USASTATE != "") %>% 
+  group_by(TRDTYPE, USASTATE) %>% 
+  summarise(Total_Value = sum(VALUE, na.rm = TRUE)) %>% 
+  mutate(Country = "USA")
+
+# Combine both datasets
+trade_data <- bind_rows(
+  mexico_trade %>% rename(Region = MEXSTATE),
+  canada_trade %>% rename(Region = CANPROV)
+)
+
+# Visualise the trade values
+ggplot(trade_data, aes(x = Region, y = Total_Value, fill = factor(TRDTYPE, labels = c("Export", "Import")))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~ Country, scales = "free") +
+  labs(
+    title = "Trade Values for Mexico (MEXSTATE) and Canada (CANPROV) Over The Past Four Years",
+    x = "Region (State/Province)",
+    y = "Total Trade Value (in dollars)",
+    fill = "Trade Type"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+# Trade Values for Canada and USA
+# Prepare data for USA
+usa_trade <- data %>% 
+  filter(!is.na(USASTATE) & USASTATE != "") %>% 
+  group_by(TRDTYPE, USASTATE) %>% 
+  summarise(Total_Value = sum(VALUE, na.rm = TRUE)) %>% 
+  mutate(Country = "USA")
+
+
+
 
 
