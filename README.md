@@ -3,7 +3,7 @@
 This project analyses transportation data from the **Bureau of Transportation Statistics (BTS)** to uncover insights into cross-border freight's efficiency, safety and environmental impacts across modes such as road, rail, air and water.
 
 ## Objectives
-- **Freight Patterns**: Identify trends in freight volume, routing, and modes of transport.
+- **Freight Patterns**: Identify trends in freight volume, routing and modes of transport.
 - **Operational Efficiency**: Detect inefficiencies and propose resource optimisation strategies.
 - **Environmental Impact**: Assess emissions and fuel usage, recommending sustainability improvements.
 - **Safety Analysis**: Evaluate incidents and suggest safety protocol enhancements.
