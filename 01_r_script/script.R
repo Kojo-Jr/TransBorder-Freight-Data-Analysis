@@ -78,7 +78,7 @@ data_2024$DEPE[data_2024$DEPE == ""] <- NA
 data_2024$DF[data_2024$DF == ""] <- NA
 data_2024$CANPROV[data_2024$CANPROV == ""] <- NA
 
-# Check to see empty cells are replaces
+# Check to see empty cells are replaced
 rowSums(is.na(data_2021) | data_2020 == "") > 0
 rowSums(is.na(data_2021) | data_2021 == "") > 0
 rowSums(is.na(data_2021) | data_2022 == "") > 0
