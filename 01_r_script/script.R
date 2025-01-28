@@ -79,14 +79,17 @@ data_2024$DF[data_2024$DF == ""] <- NA
 data_2024$CANPROV[data_2024$CANPROV == ""] <- NA
 
 # Check to see empty cells are replaced
-rowSums(is.na(data_2021) | data_2020 == "") > 0
-rowSums(is.na(data_2021) | data_2021 == "") > 0
-rowSums(is.na(data_2021) | data_2022 == "") > 0
-rowSums(is.na(data_2021) | data_2023 == "") > 0
-rowSums(is.na(data_2021) | data_2024 == "") > 0
+colnames(data_2020)[apply(data_2020, 2, anyNA)]
+colnames(data_2021)[apply(data_2021, 2, anyNA)]
+colnames(data_2022)[apply(data_2022, 2, anyNA)]
+colnames(data_2023)[apply(data_2023, 2, anyNA)]
+colnames(data_2024)[apply(data_2024, 2, anyNA)]
 
+
+# colSums(!is.na(data_2021) | data_2021 != "")
 # rowSums(is.na(data_2021) | data_2021 == "") == ncol(data_2021)
-
+# rowSums(is.na(data_2023) | data_2023 == "") > 0
+# 
 
 # View structure of the data 
 str(data_2020)
