@@ -497,7 +497,7 @@ ggplot(yearly_trends, aes(x = as.factor(YEAR), y = Total_Value / 1e6)) +
 
 
 # Trade Values for MEXSTATE AND CANPROV And USASTATE(USA)
-# Prepare data for MEXSTATE (Mexico) and CANPROV (Canada) and USASTATE (USA)
+# Prepare data for MEXSTATE (Mexico) and CANPROV (Canada) and US STATE (USA)
 mexico_trade <- data %>%
   filter(!is.na(MEXSTATE) & MEXSTATE != "") %>%  # Select rows with MEXSTATE (Mexico trade)
   group_by(TRDTYPE, MEXSTATE) %>%
@@ -510,41 +510,54 @@ canada_trade <- data %>%
   summarise(Total_Value = sum(VALUE, na.rm = TRUE)) %>%
   mutate(Country = "Canada")
 
-usa_trade <- data %>% 
+us_trade <- data %>% 
   filter(!is.na(USASTATE) & USASTATE != "") %>% 
   group_by(TRDTYPE, USASTATE) %>% 
   summarise(Total_Value = sum(VALUE, na.rm = TRUE)) %>% 
   mutate(Country = "USA")
 
 # Combine both datasets
-trade_data <- bind_rows(
-  mexico_trade %>% rename(Region = MEXSTATE),
-  canada_trade %>% rename(Region = CANPROV)
-)
+# trade_data <- bind_rows(
+#  mexico_trade %>% rename(Region = MEXSTATE),
+#  canada_trade %>% rename(Region = CANPROV)
+#)
 
 # Visualise the trade values
-ggplot(trade_data, aes(x = Region, y = Total_Value, fill = factor(TRDTYPE, labels = c("Export", "Import")))) +
+# ggplot(trade_data, aes(x = Region, y = Total_Value, fill = factor(TRDTYPE, labels = c("Export", "Import")))) +
+#  geom_bar(stat = "identity", position = "dodge") +
+#  facet_wrap(~ Country, scales = "free") +
+#  labs(
+#    title = "Trade Values for Mexico (MEXSTATE) and Canada (CANPROV) Over The Past Four Years",
+#    x = "Region (State/Province)",
+#    y = "Total Trade Value (in dollars)",
+#   fill = "Trade Type"
+#  ) +
+# theme_minimal() +
+#  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+# Visualise trade values of import and export amongst CANPROV
+ggplot(canada_trade, aes(x=CANPROV, y =Total_Value, fill = factor(TRDTYPE, labels = c("Export", "Import")))) +
   geom_bar(stat = "identity", position = "dodge") +
-  facet_wrap(~ Country, scales = "free") +
   labs(
-    title = "Trade Values for Mexico (MEXSTATE) and Canada (CANPROV) Over The Past Four Years",
-    x = "Region (State/Province)",
+    title = "Trade Values for Canada (CANPROV) Over The Past Four Years",
+    x = "CANPROV",
     y = "Total Trade Value (in dollars)",
+    fill = "Trade Type"
+  ) + 
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle= 45, hjust = 1))
+
+# Visual the trade values of import and export amongst USASTATES
+ggplot(us_trade, aes(x=USASTATE, y = Total_Value, fill = factor(TRDTYPE, labels = c("Export", "Import")))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs (
+    title = "Trade Values for US States Over The Past Four Years",
+    x = "USASTATE",
+    y = "Total Trade Value (dollars)",
     fill = "Trade Type"
   ) +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-
-# Trade Values for Canada and USA
-# Prepare data for USA
-usa_trade <- data %>% 
-  filter(!is.na(USASTATE) & USASTATE != "") %>% 
-  group_by(TRDTYPE, USASTATE) %>% 
-  summarise(Total_Value = sum(VALUE, na.rm = TRUE)) %>% 
-  mutate(Country = "USA")
-
-
-
+  theme(axis.text.x = element_text(angle=45, hjust = 1))
 
 
