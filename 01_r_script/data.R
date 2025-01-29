@@ -12,7 +12,7 @@ data_2022 <- read.csv("./00_raw_data/year_2022/dot2_ytd_1222.csv")
 
 # Data Cleaning
 
-# merging data in each month for September, October, November, December 2023
+# merge data in each month for September, October, November, December 2023
 # loading september data
 septdata23_1 <- read.csv("./00_raw_data/year_2023/sept2023/dot1_0923.csv")
 septdata23_2 <- read.csv("./00_raw_data/year_2023/sept2023/dot2_0923.csv")
