@@ -351,4 +351,26 @@ data_2024 <- bind_rows(january_2024, february_2024, march_2024, april_2024,
                        may_2024, june_2024, july_2024, august_2024, september_2024,
                        )
 
+# check columns of data 2020, data 2021, data 2022 & data 2023
+colnames(data_2020)
+colnames(data_2021)
+colnames(data_2022)
+colnames(data_2023)
+colnames(data_2024)
+
+# add missing columns data 2020, data 2021, data 2022, data 2023
+data_2020 <- data_2020 %>% 
+  mutate(DEPE = NA)
+
+data_2021 <- data_2021 %>% 
+  mutate(DEPE = NA)
+
+data_2022 <- data_2022 %>% 
+  mutate(DEPE = NA)
+
+# combine data frames 
+data <- bind_rows(data_2020, data_2021, data_2022, data_2023, data_2024)
+
+
+
 
