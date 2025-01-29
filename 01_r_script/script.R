@@ -406,7 +406,7 @@ for (year in years) {
   # Calculate the correlation matrix for VALUE, SHIPWT, and FREIGHT_CHARGES
   correlation_matrix <- yearly_data %>%
     select(VALUE, SHIPWT, FREIGHT_CHARGES) %>%
-    cor(use = "complete.obs")
+    cor(use = "complete.obs") # consider rows where there are no missing vallues(NA)
   
   # Print the correlation matrix for the current year
   print(paste("Correlation Matrix for Year:", year))
@@ -562,5 +562,7 @@ ggplot(us_trade, aes(x=USASTATE, y = Total_Value, fill = factor(TRDTYPE, labels 
   ) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle=45, hjust = 1))
+
+
 
 
