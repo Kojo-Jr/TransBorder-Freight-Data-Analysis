@@ -1,0 +1,354 @@
+
+# load libraries 
+library(janitor)
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(reshape2)
+
+data_2020 <- read.csv("./00_raw_data/year_2020/dot2_ytd_0920.csv")
+data_2021 <- read.csv("./00_raw_data/year_2021/dot2_ytd_1221.csv")
+data_2022 <- read.csv("./00_raw_data/year_2022/dot2_ytd_1222.csv")
+
+# Data Cleaning
+
+# merging data in each month for September, October, November, December 2023
+# loading september data
+septdata23_1 <- read.csv("./00_raw_data/year_2023/sept2023/dot1_0923.csv")
+septdata23_2 <- read.csv("./00_raw_data/year_2023/sept2023/dot2_0923.csv")
+septdata23_3 <- read.csv("./00_raw_data/year_2023/sept2023/dot3_0923.csv")
+
+# check column names
+colnames(septdata23_1)
+colnames(septdata23_2)
+colnames(septdata23_3)
+
+# Add missing columns to each data frame
+septdata23_1 <- septdata23_1 %>% 
+  mutate(COMMODITY2 = NA, DEPE = DEPE, USASTATE = USASTATE)
+
+septdata23_2 <- septdata23_2 %>%  
+  mutate(DEPE = NA)
+
+septdata23_3 <- septdata23_3 %>% 
+  mutate(MEXSTATE = NA, USASTATE = NA, CANPROV = NA)
+
+# Bind data rows together
+september_2023 <- bind_rows(septdata23_1, septdata23_2, septdata23_3)
+
+
+# loading data for october
+octdata23_1 <- read.csv("./00_raw_data/year_2023/Oct2023/dot1_1023.csv")
+octdata23_2 <- read.csv("./00_raw_data/year_2023/Oct2023/dot2_1023.csv")
+octdata23_3 <- read.csv("./00_raw_data/year_2023/Oct2023/dot3_1023.csv")
+
+# check column names
+colnames(octdata23_1)
+colnames(octdata23_2)
+colnames(octdata23_3)
+
+
+# Add missing columns to each data frame
+octdata23_1 <- octdata23_1 %>% 
+  mutate(COMMODITY2 = NA)
+
+octdata23_2 <- octdata23_2 %>%  
+  mutate(DEPE = NA)
+
+octdata23_3 <- octdata23_3 %>% 
+  mutate(MEXSTATE = NA, USASTATE = NA, CANPROV = NA)
+
+# bind data rows together
+october_2023 <- bind_rows(octdata23_1, octdata23_2, octdata23_3)
+
+
+# loading data for november
+novdata23_1 <- read.csv("./00_raw_data/year_2023/Nov2023/dot1_1123.csv")
+novdata23_2 <- read.csv("./00_raw_data/year_2023/Nov2023/dot2_1123.csv")
+novdata23_3 <- read.csv("./00_raw_data/year_2023/Nov2023/dot3_1123.csv")
+
+# check colnames
+colnames(novdata23_1)
+colnames(novdata23_2)
+colnames(novdata23_3)
+
+# Add missing columns to each data frame
+novdata23_1 <- novdata23_1 %>% 
+  mutate(COMMODITY2 = NA)
+
+novdata23_2 <- novdata23_2 %>%  
+  mutate(DEPE = NA)
+
+novdata23_3 <- novdata23_3 %>% 
+  mutate(MEXSTATE = NA, USASTATE = NA, CANPROV = NA)
+
+# bind data frames for november
+november_2023 <- bind_rows(novdata23_1, novdata23_2, novdata23_3)
+
+
+# loading data for december
+decdata23_1 <- read.csv("./00_raw_data/year_2023/December2023/dot1_1223.csv")
+decdata23_2 <- read.csv("./00_raw_data/year_2023/December2023/dot2_1223.csv")
+decdata23_3 <- read.csv("./00_raw_data/year_2023/December2023/dot3_1223.csv")
+
+# check colnames
+colnames(decdata23_1)
+colnames(decdata23_2)
+colnames(decdata23_3)
+
+
+# Add missing columns to each data frame
+decdata23_1 <- decdata23_1 %>% 
+  mutate(COMMODITY2 = NA)
+
+decdata23_2 <- decdata23_2 %>%  
+  mutate(DEPE = NA)
+
+decdata23_3 <- decdata23_3 %>% 
+  mutate(MEXSTATE = NA, USASTATE = NA, CANPROV = NA)
+
+# bind data rows for december
+december_2023 <- bind_rows(decdata23_1, decdata23_2, decdata23_3)
+
+
+
+# merge september to december data set
+sept_to_dec_23 <- bind_rows(september_2023, october_2023, november_2023, 
+                            december_2023)
+
+# check colnames of date to year from jan to august 2023
+jan_to_aug_23 <- read.csv("./00_raw_data/year_2023/dot2_ytd_0823.csv")
+
+# check colnames 
+colnames(jan_to_aug_23)
+colnames(sept_to_dec_23)
+
+# Add missing columns
+jan_to_aug_23 <- jan_to_aug_23 %>% 
+  mutate(DEPE = NA)
+
+# bind the two data rows
+data_2023 <- bind_rows(jan_to_aug_23, sept_to_dec_23)
+
+
+
+# Merging data sets in each month of year 2024
+# The data sets in this month has no merged date to year data
+
+# For January
+jandata24_1 <- read.csv("./00_raw_data/year_2024/Jan2024/dot1_0124.csv")
+jandata24_2 <- read.csv("./00_raw_data/year_2024/Jan2024/dot2_0124.csv")
+jandata24_3 <- read.csv("./00_raw_data/year_2024/Jan2024/dot3_0124.csv")
+
+# check colnames
+colnames(jandata24_1)
+colnames(jandata24_2)
+colnames(jandata24_3)
+
+# Add missing columns to data set
+jandata24_1 <- jandata24_1 %>% 
+mutate(COMMODITY2 = NA )
+
+jandata24_2 <- jandata24_2 %>% 
+  mutate(DEPE = NA)
+
+jandata24_3 <- jandata24_3 %>% 
+  mutate(MEXSTATE = NA, USASTATE = NA, CANPROV = NA)
+
+# bind data rows
+january_2024 <- bind_rows(jandata24_1, jandata24_2, jandata24_3)
+
+
+
+# For February
+febdata24_1 <- read.csv("./00_raw_data/year_2024/Feb2024/dot1_0224.csv")
+febdata24_2 <- read.csv("./00_raw_data/year_2024/Feb2024/dot2_0224.csv")
+febdata24_3 <- read.csv("./00_raw_data/year_2024/Feb2024/dot3_0224.csv")
+
+# Check colnames 
+colnames(febdata24_1)
+colnames(febdata24_2)
+colnames(febdata24_3)
+
+# Add missing columns to data set
+febdata24_1 <- febdata24_1 %>% 
+  mutate(COMMODITY2 = NA )
+
+febdata24_2 <- febdata24_2 %>% 
+  mutate(DEPE = NA)
+
+febdata24_3 <- febdata24_3 %>% 
+  mutate(MEXSTATE = NA, USASTATE = NA, CANPROV = NA)
+
+# bind data rows
+february_2024 <- bind_rows(febdata24_1, febdata24_2, febdata24_3)
+
+
+# for March
+mardata24_1 <- read.csv("./00_raw_data/year_2024/March2024/dot1_0324.csv")
+mardata24_2 <- read.csv("./00_raw_data/year_2024/March2024/dot2_0324.csv")
+
+# check column names
+colnames(mardata24_1)
+colnames(mardata24_2)
+
+# Add missing columns
+mardata24_1 <- mardata24_1 %>% 
+  mutate(COMMODITY2 = NA )
+
+mardata24_2 <- mardata24_2 %>% 
+  mutate(DEPE = NA)
+
+# bind rows
+march_2024 <- bind_rows(mardata24_1, mardata24_2)
+
+
+# for April
+aprdata24_1 <- read.csv("./00_raw_data/year_2024/April2024/dot1_0424.csv")
+aprdata24_2 <- read.csv("./00_raw_data/year_2024/April2024/dot2_0424.csv")
+aprdata24_3 <- read.csv("./00_raw_data/year_2024/April2024/dot3_0424.csv")
+
+# check colnames
+colnames(aprdata24_1)
+colnames(aprdata24_2)
+colnames(aprdata24_3)
+
+# add missing columns
+aprdata24_1 <- aprdata24_1 %>% 
+  mutate(COMMODITY2 = NA)
+
+aprdata24_2 <- aprdata24_2 %>% 
+  mutate(DEPE = NA)
+
+aprdata24_3 <- aprdata24_3 %>% 
+  mutate(MEXSTATE = NA, USASTATE = NA, CANPROV = NA)
+
+# bind rows 
+april_2024 <- bind_rows(aprdata24_1, aprdata24_2, aprdata24_3)
+
+
+# for may 2024
+maydata24_1 <- read.csv("./00_raw_data/year_2024/May2024/dot1_0524.csv")
+maydata24_2 <- read.csv("./00_raw_data/year_2024/May2024/dot2_0524.csv")
+maydata24_3 <- read.csv("./00_raw_data/year_2024/May2024/dot3_0524.csv")
+
+# check for column names
+colnames(maydata24_1)
+colnames(maydata24_2)
+colnames(maydata24_3)
+
+# add missing columns
+maydata24_1 <- maydata24_1 %>% 
+  mutate(COMMODITY2 = NA)
+
+maydata24_2 <- maydata24_2 %>% 
+  mutate(DEPE = NA)
+
+maydata24_3 <- maydata24_3 %>% 
+  mutate(MEXSTATE = NA, USASTATE = NA, CANPROV = NA)
+
+# bind the data frames
+may_2024 <- bind_rows(maydata24_1, maydata24_2, maydata24_3)
+
+
+# for June 2024
+junedata24_1 <- read.csv("./00_raw_data/year_2024/June2024/dot1_0624.csv")
+junedata24_2 <- read.csv("./00_raw_data/year_2024/June2024/dot2_0624.csv")
+junedata24_3 <- read.csv("./00_raw_data/year_2024/June2024/dot3_0624.csv")
+
+# checking columns
+colnames(junedata24_1)
+colnames(junedata24_2)
+colnames(junedata24_3)
+
+# add missing columns
+junedata24_1 <- junedata24_1 %>% 
+  mutate(COMMODITY2 = NA)
+
+junedata24_2 <- junedata24_2 %>% 
+  mutate(DEPE = NA)
+
+junedata24_3 <- junedata24_3 %>% 
+  mutate(MEXSTATE = NA, USASTATE = NA, CANPROV = NA)
+
+# bind rows
+june_2024 <- bind_rows(junedata24_1, junedata24_2, junedata24_3)
+
+
+# for july 
+judata24_1 <- read.csv("./00_raw_data/year_2024/July2024/dot1_0724.csv")
+judata24_2 <- read.csv("./00_raw_data/year_2024/July2024/dot2_0724.csv")
+judata24_3 <- read.csv("./00_raw_data/year_2024/July2024/dot3_0724.csv")
+
+# check columns
+colnames(judata24_1)
+colnames(judata24_2)
+colnames(judata24_3)
+
+# add missing columns
+judata24_1 <- judata24_1 %>% 
+  mutate(COMMODITY2 = NA)
+
+judata24_2 <- judata24_2 %>% 
+  mutate(DEPE = NA)
+
+judata24_3 <- judata24_3 %>% 
+  mutate(MEXSTATE = NA, USASTATE = NA, CANPROV = NA)
+
+# bind rows
+july_2024 <- bind_rows(judata24_1, judata24_2, judata24_3)
+
+
+# for august
+augustdata24_1 <- read.csv("./00_raw_data/year_2024/August2024/dot1_0824.csv")
+augustdata24_2 <- read.csv("./00_raw_data/year_2024/August2024/dot2_0824.csv")
+augustdata24_3 <- read.csv("./00_raw_data/year_2024/August2024/dot3_0824.csv")
+
+# check for colnames
+colnames(augustdata24_1)
+colnames(augustdata24_2)
+colnames(augustdata24_3)
+
+# add missing columns 
+augustdata24_1 <- augustdata24_1 %>% 
+  mutate(COMMODITY2 = NA)
+
+augustdata24_2 <- augustdata24_2 %>% 
+  mutate(DEPE = NA)
+
+augustdata24_3 <- augustdata24_3 %>% 
+  mutate(MEXSTATE = NA, USASTATE = NA, CANPROV = NA)
+
+# bind rows
+august_2024 <- bind_rows(augustdata24_1, augustdata24_2, augustdata24_3)
+
+
+# for september 
+septdata24_1 <- read.csv("./00_raw_data/year_2024/september2024/dot1_0924.csv")
+septdata24_2 <- read.csv("./00_raw_data/year_2024/september2024/dot2_0924.csv")
+septdata24_3 <- read.csv("./00_raw_data/year_2024/september2024/dot3_0924.csv")
+
+# check for columns
+colnames(septdata24_1)
+colnames(septdata24_2)
+colnames(septdata24_3)
+
+# add missing columns
+septdata24_1 <- septdata24_1 %>% 
+  mutate(COMMODITY2 = NA)
+
+septdata24_2 <- septdata24_2 %>% 
+  mutate(DEPE = NA)
+
+septdata24_3 <- septdata24_3 %>% 
+  mutate(MEXSTATE = NA, USASTATE = NA, CANPROV = NA)
+
+# bind rows
+september_2024 <- bind_rows(septdata24_1, septdata24_2, septdata24_3)
+
+# bind data frames to form 2024 data set
+data_2024 <- bind_rows(january_2024, february_2024, march_2024, april_2024,
+                       may_2024, june_2024, july_2024, august_2024, september_2024,
+                       )
+
+

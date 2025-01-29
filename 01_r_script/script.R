@@ -406,7 +406,7 @@ for (year in years) {
   # Calculate the correlation matrix for VALUE, SHIPWT, and FREIGHT_CHARGES
   correlation_matrix <- yearly_data %>%
     select(VALUE, SHIPWT, FREIGHT_CHARGES) %>%
-    cor(use = "complete.obs") # consider rows where there are no missing vallues(NA)
+    cor(use = "complete.obs") # consider rows where there are no missing values(NA)
   
   # Print the correlation matrix for the current year
   print(paste("Correlation Matrix for Year:", year))
