@@ -6,13 +6,78 @@ library(ggplot2)
 library(scales)
 library(reshape2)
 
-data_2020 <- read.csv("./00_raw_data/year_2020/dot2_ytd_0920.csv")
-data_2021 <- read.csv("./00_raw_data/year_2021/dot2_ytd_1221.csv")
-data_2022 <- read.csv("./00_raw_data/year_2022/dot2_ytd_1222.csv")
 
-# Data Cleaning
+# 2020
+# merge the ytd csv files located in the last month of 2020 folder
+# the ytd csv consist of data from the month jan to september
+spt20dty_1 <- read.csv("00_raw_data/year_2020/September2020/dot1_ytd_0920.csv")
+spt20dty_2 <- read.csv("00_raw_data/year_2020/September2020/dot2_ytd_0920.csv")
+spt20dty_3 <- read.csv("00_raw_data/year_2020/September2020/dot3_ytd_0920.csv")
+
+# check missing columns
+colnames(spt20dty_1)
+colnames(spt20dty_2)
+colnames(spt20dty_3)
+
+# add missing columns
+spt20dty_1 <- spt20dty_1 %>% 
+  mutate(COMMODITY2 = NA)
+
+spt20dty_2 <- spt20dty_2 %>% 
+  mutate(DEPE = NA)
+
+spt20dty_3 <- spt20dty_3 %>% 
+  mutate(MEXSTATE = NA, USASTATE = NA, CANPROV = NA)
+
+# bind the data frame rows to form data_2020
+data_2020 <- bind_rows(spt20dty_1, spt20dty_2, spt20dty_3)
+
+# check for duplicates
+data_2020 <- data_2020 %>% distinct()
+
+
+
+
+# 2021
+# load, merge the ytd csv files located in the last month of 2021 folder
+# the ytd csv consist of data from the month jan to december
+
+ytd21_1 <- read.csv("00_raw_data/year_2021/December2021/dot1_ytd_1221.csv")
+ytd21_2 <- read.csv("00_raw_data/year_2021/December2021/dot2_ytd_1221.csv")
+ytd21_3 <- read.csv("00_raw_data/year_2021/December2021/dot3_ytd_1221.csv")
+
+
+# check for columns
+colnames(ytd21_1)
+colnames(ytd21_2)
+colnames(ytd21_3)
+
+
+# add missing columns
+ytd21_1 <- ytd21_1 %>% 
+  mutate(COMMODITY2 = NA)
+
+ytd21_2 <- ytd21_2 %>% 
+  mutate(DEPE = NA)
+
+ytd21_3 <- ytd21_3 %>%
+  mutate(MEXSTATE = NA, USASTATE = NA, CANPROV = NA)
+
+data_2021 <- bind_rows(ytd21_1, ytd21_2, ytd21_3)
+
+
+# 2022
+# load, merge the ytd csv files located in the last month of 2022 folder
+# the ytd csv consist of data from the month jan to december
+ytd22_1 <- read.csv("00_raw_data/year_2022/December2022/dot1_ytd_1222.csv")
+ytd22_2 <- read.csv("00_raw_data/year_2022/December2022/dot2_ytd_1222.csv")
+ytd22_3 <- read.csv("00_raw_data/year_2022/December2022/dot3_ytd_1222.csv")
+
+
+
 
 # merge data in each month for September, October, November, December 2023
+# since the data for these month has no ytd
 # loading september data
 septdata23_1 <- read.csv("./00_raw_data/year_2023/sept2023/dot1_0923.csv")
 septdata23_2 <- read.csv("./00_raw_data/year_2023/sept2023/dot2_0923.csv")
@@ -371,6 +436,16 @@ data_2022 <- data_2022 %>%
 # combine data frames 
 data <- bind_rows(data_2020, data_2021, data_2022, data_2023, data_2024)
 
+# check for NA's or empty cells
+colSums(is.na(data) | data == "")
 
+# replace empty cells with NA's
+data[data == ""] <- NA
 
+# check if empty cells are replaced
+colnames(data)[apply(data, 2, anyNA)]
 
+# View structure of the data
+str(data)
+
+sum(duplicated(data_2024))
