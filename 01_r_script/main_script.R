@@ -63,6 +63,7 @@ ytd21_2 <- ytd21_2 %>%
 ytd21_3 <- ytd21_3 %>%
   mutate(MEXSTATE = NA, USASTATE = NA, CANPROV = NA)
 
+# bind rows
 data_2021 <- bind_rows(ytd21_1, ytd21_2, ytd21_3)
 
 
@@ -74,10 +75,31 @@ ytd22_2 <- read.csv("00_raw_data/year_2022/December2022/dot2_ytd_1222.csv")
 ytd22_3 <- read.csv("00_raw_data/year_2022/December2022/dot3_ytd_1222.csv")
 
 
+# check for column names
+colnames(ytd22_1)
+colnames(ytd22_2)
+colnames(ytd22_3)
 
 
+# add missing columns
+ytd22_1 <- ytd22_1 %>% 
+  mutate(COMMODITY2 = NA)
+
+ytd22_2 <- ytd22_2 %>% 
+  mutate(DEPE = NA)
+
+ytd22_3 <- ytd22_3 %>%
+  mutate(MEXSTATE = NA, USASTATE = NA, CANPROV = NA)
+
+# bind rows
+data_2022 <- bind_rows(ytd22_1, ytd22_2, ytd22_3)
+
+
+
+
+# 2023
 # merge data in each month for September, October, November, December 2023
-# since the data for these month has no ytd
+# since the data for these months has no ytd csv files
 # loading september data
 septdata23_1 <- read.csv("./00_raw_data/year_2023/sept2023/dot1_0923.csv")
 septdata23_2 <- read.csv("./00_raw_data/year_2023/sept2023/dot2_0923.csv")
@@ -182,21 +204,36 @@ sept_to_dec_23 <- bind_rows(september_2023, october_2023, november_2023,
                             december_2023)
 
 # check colnames of date to year from jan to august 2023
-jan_to_aug_23 <- read.csv("./00_raw_data/year_2023/dot2_ytd_0823.csv")
+jan_to_aug_23_1 <- read.csv("./00_raw_data/year_2023/Aug2023/dot1_ytd_0823.csv")
+jan_to_aug_23_2 <- read.csv("00_raw_data/year_2023/Aug2023/dot2_ytd_0823.csv")
+jan_to_aug_23_3 <- read.csv("./00_raw_data/year_2023/Aug2023/dot3_ytd_0823.csv")
+
 
 # check colnames 
-colnames(jan_to_aug_23)
-colnames(sept_to_dec_23)
+colnames(jan_to_aug_23_1)
+colnames(jan_to_aug_23_2)
+colnames(jan_to_aug_23_3)
 
 # Add missing columns
-jan_to_aug_23 <- jan_to_aug_23 %>% 
+jan_to_aug_23_1 <- jan_to_aug_23_1 %>% 
+  mutate(COMMODITY2 = NA)
+
+jan_to_aug_23_2 <- jan_to_aug_23_2 %>% 
   mutate(DEPE = NA)
+
+jan_to_aug_23_3 <- jan_to_aug_23_3 %>% 
+  mutate(MEXSTATE = NA, USASTATE = NA, CANPROV = NA)
+
+# bind rows to form a dataframe
+jan_to_aug_23 <- bind_rows(jan_to_aug_23_1, jan_to_aug_23_2, jan_to_aug_23_3)
 
 # bind the two data rows
 data_2023 <- bind_rows(jan_to_aug_23, sept_to_dec_23)
 
 
 
+
+# for 2024
 # Merging data sets in each month of year 2024
 # The data sets in this month has no merged date to year data
 
