@@ -6,6 +6,7 @@ library(ggplot2)
 library(scales)
 library(reshape2)
 
+# data cleaning
 
 # 2020
 # merge the ytd csv files located in the last month of 2020 folder
@@ -235,7 +236,7 @@ data_2023 <- bind_rows(jan_to_aug_23, sept_to_dec_23)
 
 # for 2024
 # Merging data sets in each month of year 2024
-# The data sets in this month has no merged date to year data
+# The data sets in this year's monthly folders has no year to date csv
 
 # For January
 jandata24_1 <- read.csv("./00_raw_data/year_2024/Jan2024/dot1_0124.csv")
@@ -460,18 +461,11 @@ colnames(data_2022)
 colnames(data_2023)
 colnames(data_2024)
 
-# add missing columns data 2020, data 2021, data 2022, data 2023
-data_2020 <- data_2020 %>% 
-  mutate(DEPE = NA)
-
-data_2021 <- data_2021 %>% 
-  mutate(DEPE = NA)
-
-data_2022 <- data_2022 %>% 
-  mutate(DEPE = NA)
-
 # combine data frames 
 data <- bind_rows(data_2020, data_2021, data_2022, data_2023, data_2024)
+
+# checked for duplicates
+sum(duplicated(data))
 
 # check for NA's or empty cells
 colSums(is.na(data) | data == "")
