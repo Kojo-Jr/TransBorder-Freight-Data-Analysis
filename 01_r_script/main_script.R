@@ -543,9 +543,9 @@ yearly_statistics <- data %>%
 yearly_statistics
 
 
-# Data visualization
+# Data visualisation
 
-# Data visualization based on transportation mode (DISAGMOT)
+# Data visualisation based on transportation mode (DISAGMOT)
 mode_description <- c(
   "1" = "Vessel",
   "3" = "Air",
@@ -578,7 +578,11 @@ transportation_mode <- ggplot(data, aes(
 transportation_mode
 
 
-# data visualization of freight value over time for each year
+
+# data visualisation of freight value over time for each year
+# Run the analysis for years
+years <- c(2020, 2021, 2022, 2023, 2024)
+
 analyse_yearly_data <- function(data, year) {
   # filter data for the given year and aggregate by month
   monthly_summary <- data %>% 
@@ -601,7 +605,7 @@ analyse_yearly_data <- function(data, year) {
     geom_point(color = "red", size = 3) +
     scale_y_continuous(
       # round the y axis to millions
-      labels = scales::label_number(scale = 1e-6, suffix = M, accuracy = 0.01)
+      labels = scales::label_number(scale = 1e-6, suffix = "M", accuracy = 0.01)
     ) +
     labs(
       title = paste("Monthly Freight Value in", year),
@@ -611,13 +615,18 @@ analyse_yearly_data <- function(data, year) {
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
-  # Run the analysis for years
-  years <- c(2020, 2021, 2022, 2023, 2024)
-  
-  # using the for loop 
-  for(year in years) {
-    print(analyse_yearly_data(data, year))
-  }
+}
+
+# using the for loop 
+for(year in years) {
+  print(paste("Processing data for year:", year))
+  print(analyse_yearly_data(data, year))
 }
 
 
+
+
+# data visualisation on ShipWt by US States
+for(year in years) {
+  #filter dat
+}
