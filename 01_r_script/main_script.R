@@ -479,4 +479,101 @@ colnames(data)[apply(data, 2, anyNA)]
 # View structure of the data
 str(data)
 
-sum(duplicated(data_2024))
+# convert TRDTYPE, DISAGMOT, Country, DF, Month, Year
+data[c('TRDTYPE', 'DISAGMOT', 'COUNTRY', 'DF', 'MONTH', 'YEAR')] <- lapply(
+  data[c('TRDTYPE', 'DISAGMOT', 'COUNTRY', 'DF', 'MONTH', 'YEAR')], as.character
+)
+
+
+
+
+
+
+# ANALYSIS
+
+# summary statistics aggregated across the entire data set
+
+options(scipen = 999) # set to avoid scientific notation 
+
+summary_statistics <- data %>%
+  summarise(
+    Total_Value = sum(VALUE, na.rm = T),
+    Total_ShipWt = sum(SHIPWT, na.rm = T),
+    Total_Freight_Charges = sum(FREIGHT_CHARGES, na.rm = T),
+    Avg_Value = mean(VALUE, na.rm = T),
+    Avg_ShipWt = mean(SHIPWT, na.rm = T),
+    Avg_Freight_Charges = mean(FREIGHT_CHARGES, na.rm = T)
+  )
+
+summary_statistics
+format(summary_statistics, scientific = F, big.mark = ",")
+
+
+# Grouping data by YEAR and calculating yearly statistics
+yearly_statistics <- data %>% 
+  group_by(YEAR) %>%
+  summarise(
+    Total_Value = sum(VALUE, na.rm = T),
+    Total_ShipWt = sum(SHIPWT, na.rm = T),
+    Total_Freight_Charges = sum(FREIGHT_CHARGES, na.rm = T),
+    Avg_Value = mean(VALUE, na.rm = T),
+    Avg_ShipWt = mean(SHIPWT, na.rm = T),
+    Avg_Freight_Charges = mean(FREIGHT_CHARGES, na.rm = T)
+  ) %>%
+  # round the numbers to  3 decimals
+  mutate(
+    Total_Value = round(Total_Value /1e9, 3), # convert to billions and round
+    Total_ShipWt = round(Total_ShipWt /1e9, 3), # convert to billions and round
+    Total_Freight_Charges = round(Total_Freight_Charges /1e6), # convert to millions and round
+    Avg_Value = round(Avg_Value, 3),
+    Avg_ShipWt = round(Avg_ShipWt, 3),
+    Avg_Freight_Charges = round(Avg_Freight_Charges, 3)
+  ) %>% 
+  # Add units for clarity
+  mutate(
+    Total_Value = paste(Total_Value, "B", sep = ""),
+    Total_ShipWt = paste(Total_ShipWt, "B", sep = ""),
+    Total_Freight_Charges = paste(Total_Freight_Charges, "M", sep = ""),
+    Avg_Value = paste(Avg_Value, "M", sep = ""),
+    Avg_ShipWt = paste(Avg_ShipWt, "kg", sep = ""),
+    Avg_Freight_Charges = paste(Avg_Freight_Charges, "M", sep = "")
+  )
+
+# print yearly statistics
+yearly_statistics
+
+
+# Data visualization
+
+# Data visualization based on transportation mode (DISAGMOT)
+mode_description <- c(
+  "1" = "Vessel",
+  "3" = "Air",
+  "4" = "Mail (U.S. Post Service)",
+  "5" = "Truck",
+  "6" = "Rail",
+  "7" = "Pipeline",
+  "8" = "Other",
+  "9" = "Foreign Trade Zones (FTZs)"
+)
+
+# plotting the freight value by mode across the years
+transportation_mode <- ggplot(data, aes(
+  x = YEAR, y = VALUE / 1e6,
+  fill = factor(DISAGMOT)
+)) + geom_bar(stat = "identity", position = "dodge") +
+  labs(
+    title = "Top Modes of Transportation by Freight Value",
+    x = "Year",
+    y = "Value (in millions)"
+  ) + 
+  theme_minimal() +
+  scale_fill_manual(
+    values = RColorBrewer::brewer.pal(8, "Set2"),  # Choosing a color palette with enough colors
+    labels = mode_description,                    # Custom labels for transportation modes
+    name = "Transportation Mode"
+  )
+
+# print transportation mode
+transportation_mode
+
