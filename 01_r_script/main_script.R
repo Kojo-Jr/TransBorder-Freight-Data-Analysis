@@ -578,4 +578,46 @@ transportation_mode <- ggplot(data, aes(
 transportation_mode
 
 
+# data visualization of freight value over time for each year
+analyse_yearly_data <- function(data, year) {
+  # filter data for the given year and aggregate by month
+  monthly_summary <- data %>% 
+    filter(YEAR == year) %>% 
+    group_by(MONTH) %>% 
+    summarise(Total_Value = sum(VALUE, na.rm = T)) %>% 
+    mutate(
+      Monthly_label = factor(MONTH, levels = 1:12, labels = month.name)
+    ) %>% 
+    arrange(MONTH)
+  
+  # print monthly summary
+  monthly_summary
+  
+  # plot the data 
+  ggplot(monthly_summary, aes(
+    x = Monthly_label, y = Total_Value
+  )) + 
+    geom_line(color = "blue", linewidth = 1.2) +
+    geom_point(color = "red", size = 3) +
+    scale_y_continuous(
+      # round the y axis to millions
+      labels = scales::label_number(scale = 1e-6, suffix = M, accuracy = 0.01)
+    ) +
+    labs(
+      title = paste("Monthly Freight Value in", year),
+      x = "Month",
+      y = "Total Freight Value (USD)"
+    ) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+  # Run the analysis for years
+  years <- c(2020, 2021, 2022, 2023, 2024)
+  
+  # using the for loop 
+  for(year in years) {
+    print(analyse_yearly_data(data, year))
+  }
+}
+
 
