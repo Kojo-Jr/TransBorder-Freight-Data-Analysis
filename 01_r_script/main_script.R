@@ -577,3 +577,5 @@ transportation_mode <- ggplot(data, aes(
 # print transportation mode
 transportation_mode
 
+
+
