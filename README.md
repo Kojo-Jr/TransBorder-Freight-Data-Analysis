@@ -18,18 +18,18 @@ The analysis follows the **CRISP-DM** framework:
    ### Monthly Data Organization & Aggregation
    - Data files for each month were stored in corresponding monthly folders.
    - For the years 2020, 2021, and 2022, each month contained a YTD (Year-to-Date) CSV file, which aggregated data from January up to that month.
-   - The YTD files of the last months of each year were loaded into RStudio, and column names were checked for consistency across months. Any missing columns were identified and addressed before merging 
+   - The YTD files of the last months of each year were loaded into RStudio and column names were checked for consistency across months. Any missing columns were identified and addressed before merging 
      the files to generate a complete dataset for each year.
    - Duplicate entries were also checked and removed to maintain data integrity.
    - Column names across all datasets were carefully checked to ensure uniformity, enabling seamless binding of data across years.
    ### Handling 2023 Data
    - The YTD files was available for January to August 2023, providing cumulative data up to that period.
-   - These monthly DOT files were loaded into RStudio, missing columns were addressed, and they were merged to reconstruct the complete monthly dataset.
+   - These monthly DOT files were loaded into RStudio, missing columns were addressed and they were merged to reconstruct the complete monthly dataset.
    - Once the September to December data was processed, it was merged with the January–August YTD dataset to form the full 2023 dataset.
    ### Handling 2024 Data
    - Unlike previous years, 2024 did not have YTD CSV files for each month.
-   - Instead, each month contained separate DOT1, DOT2, and DOT3 CSV files.
-   - These files were loaded into RStudio, column inconsistencies were resolved, and they were merged to form a complete dataset for each month.
+   - Instead, each month contained separate DOT1, DOT2 and DOT3 CSV files.
+   - These files were loaded into RStudio, column inconsistencies were resolved and they were merged to form a complete dataset for each month.
    - Finally, the monthly datasets were combined to create a unified 2024 dataset.
    ### Final Data Cleaning Steps
    - Column consistency was re-checked across all years to ensure a uniform structure for analysis.
