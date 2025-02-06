@@ -479,14 +479,73 @@ colnames(data)[apply(data, 2, anyNA)]
 # View structure of the data
 str(data)
 
+# Filling the  NA values of each column
+# Check unique values of each column
+unique(data$USASTATE)
+unique(data$DEPE)
+unique(data$MEXSTATE)
+unique(data$CANPROV)
+unique(data$DF)
+
+
+# fill of the USASTATE NA's based on the DEPE codes
+# create a vector
+depe_mapping <- c(
+  "01XX" = "ME", "0101" = "ME", "0102" = "ME", "0103" = "ME", "0104" = "ME", "0105" = "ME",
+  "0106" = "ME", "0107" = "ME", "0108" = "ME", "0109" = "ME", "0110" = "ME", "0111" = "ME",
+  "0112" = "ME", "0115" = "ME", "0118" = "ME", "0121" = "ME", "0127" = "ME", "0131" = "NH",
+  "0132" = "ME", "0182" = "NH", "0152" = "ME", "0181" = "ME",
+  "02XX" = "VT", "0201" = "VT", "0203" = "VT", "0206" = "VT", "0207" = "VT",
+  "0209" = "VT", "0211" = "VT", "0212" = "VT",
+  "04XX" = "MA", "0401" = "MA", "0402" = "MA", "0403" = "MA", "0404" = "MA", "0405" = "MA",
+  "0406" = "MA", "0407" = "MA", "0408" = "MA", "0409" = "MA", "0410" = "CT", "0411" = "CT",
+  "0412" = "CT", "0413" = "MA", "0417" = "MA",
+  "05XX" = "RI", "0501" = "RI", "0502" = "RI", "0503" = "RI",
+  "07XX" = "NY", "0701" = "NY", "0704" = "NY", "0706" = "NY", "0708" = "NY",
+  "0712" = "NY", "0714" = "NY", "0715" = "NY",
+  "09XX" = "NY", "0901" = "NY", "0903" = "NY", "0904" = "NY", "0905" = "NY",
+  "0906" = "NY", "0971" = "NY", "0972" = "NY", "0981" = "NY",
+  "10XX" = "NY", "1001" = "NY", "1002" = "NY", "1003" = "NJ", "1012" = "NY",
+  "11XX" = "PA", "1101" = "PA", "1102" = "PA", "1103" = "DE", "1104" = "PA",
+  "1105" = "NJ", "1106" = "PA", "1107" = "NJ", "1109" = "PA", "1113" = "NJ",
+  "1119" = "PA", "1181" = "PA", "1182" = "NJ", "1183" = "NJ", "1195" = "PA",
+  "13XX" = "MD", "1301" = "MD", "1302" = "MD", "1303" = "MD", "1304" = "MD", "1305" = "MD",
+  "14XX" = "VA", "1401" = "VA", "1402" = "VA", "1404" = "VA", "1408" = "VA",
+  "1409" = "VA", "1410" = "VA", "1412" = "VA",
+  "15XX" = "NC", "1501" = "NC", "1502" = "NC", "1503" = "NC", "1506" = "NC",
+  "1511" = "NC", "1512" = "NC",
+  "16XX" = "SC", "1601" = "SC", "1602" = "SC", "1603" = "SC", "1604" = "SC", "1681" = "SC",
+  "17XX" = "GA", "1701" = "GA", "1703" = "GA", "1704" = "GA",
+  "18XX" = "GA", "1801" = "FL", "1803" = "FL", "1805" = "FL", "1807" = "FL", "1808" = "FL",
+  "1809" = "FL", "1814" = "FL", "1816" = "FL", "1818" = "FL", "1819" = "FL",
+  "1821" = "FL", "1822" = "FL", "1883" = "FL", "1884" = "FL", "1885" = "FL",
+  "1886" = "FL", "1887" = "FL",
+  "19XX" = "AL", "1901" = "AL", "1903" = "AS", "1904" = "LA", "1910" = "LA",
+  "2006" = "TN", "2007" = "TN",
+  "23XX" = "TX", "2301" = "TX", "2302" = "TX", "2303" = "TX", "2304" = "TX",
+  "2305" = "TX", "2307" = "TX", "2310" = "TX",
+  "24XX" = "TX", "2402" = "TX", "2403" = "TX", "2404" = "TX", "2406" = "NM",
+  "2407" = "NM", "2408" = "NM", "2481" = "NM",
+  "25XX" = "CA", "2501" = "CA", "2502" = "CA", "2503" = "CA", "2504" = "CA",
+  "2505" = "CA", "2506" = "CA", "2507" = "CA",
+  "26XX" = "AZ", "2601" = "AZ", "2602" = "AZ", "2603" = "AZ", "2604" = "AZ",
+  "2605" = "AZ", "2606" = "AZ", "2608" = "AZ", "2609" = "AZ",
+  "27XX" = "CA", "2704" = "CA", "2720" = "CA",
+  "30XX" = "WA", "31XX" = "WA", "32XX" = "OR", "33XX" = "MT", "34XX" = "ND",
+  "35XX" = "MN", "36XX" = "WI", "37XX" = "MI", "38XX" = "MI", "39XX" = "OH",
+  "41XX" = "IL", "45XX" = "KY", "49XX" = "LA", "51XX" = "NM", "52XX" = "TX",
+  "53XX" = "WA", "54XX" = "OR", "55XX" = "TX", "59XX" = "CA",
+  "60XX" = "HI", "80XX" = "AK"
+)
+
+# Replace NA values in USASTATE based on DEPE mapping
+data$USASTATE[is.na(data$USASTATE)] <- depe_mapping[data$DEPE[is.na(data$USASTATE)]]
+
+
 # convert TRDTYPE, DISAGMOT, Country, DF, Month, Year
 data[c('TRDTYPE', 'DISAGMOT', 'COUNTRY', 'DF', 'MONTH', 'YEAR')] <- lapply(
   data[c('TRDTYPE', 'DISAGMOT', 'COUNTRY', 'DF', 'MONTH', 'YEAR')], as.character
 )
-
-
-
-
 
 
 # ANALYSIS
@@ -547,7 +606,7 @@ yearly_statistics
 
 # Data visualisation based on transportation mode (DISAGMOT)
 mode_description <- c(
-  "1" = "Vessel",
+  "1"  = "Vessel",
   "3" = "Air",
   "4" = "Mail (U.S. Post Service)",
   "5" = "Truck",
@@ -628,5 +687,12 @@ for(year in years) {
 
 # data visualisation on ShipWt by US States
 for(year in years) {
-  #filter dat
+  # filter data for the current year
+  yearly_data <- data %>%  filter(YEAR == year)
+  
+  # summarize the total freight (SHIPWT) by state 
+  state_freight_summary <- yearly_data %>% 
+    group_by(USASTATE) %>% 
+    summarise(Total_ShipWt = sum(SHIPWT, na.rm = T)) %>% 
+    arrange(desc(Total_ShipWt)) # sort by total freight
 }
