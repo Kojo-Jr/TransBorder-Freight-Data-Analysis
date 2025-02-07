@@ -28,13 +28,12 @@ The objectives were defined below, followed by the formulation of analytical que
 ### Analytic Questions:
 
 a.  What are the top modes of transportation by freight value?
-b.  How does freight movement vary across states and countries?
-c.  What is the trend of freight value over time?
-d.  Which state contributes the most to freight weight?
+b.  Which US state contributes the most to freight weight?
+c.  What is the correlation between Freight Value, Shipment Weight and Freight Charges for each year from 2020 to 2024?
+d.  How has the total freight value changed over the years from 2020 to 2024?
 e.  Which country contributes the most to freight value
 f.  What patterns exist between shipment weight and charges?
-g.  What is the correlation between Freight Value, Shipment Weight and Freight Charges for each year from 2020 to 2024?
-h.  How has the total freight value changed over the years from 2020 to 2024?
+g.  How has the total freight value changed over the years from 2020 to 2024?
 
 ## 2. Data Understanding
 
@@ -527,6 +526,12 @@ data <- bind_rows(data_2020, data_2021, data_2022, data_2023, data_2024)
 # checked for duplicates
 # sum(duplicated(data))
 
+# convert TRDTYPE, DISAGMOT, Country, DF, Month, Year
+data[c('TRDTYPE', 'DISAGMOT', 'COUNTRY', 'DF', 'MONTH', 'YEAR')] <- lapply(
+  data[c('TRDTYPE', 'DISAGMOT', 'COUNTRY', 'DF', 'MONTH', 'YEAR')], as.character
+)
+
+
 # check for NA's or empty cells
 colSums(is.na(data) | data == "")
 
@@ -604,11 +609,16 @@ data$USASTATE[is.na(data$USASTATE)] <- depe_mapping[data$DEPE[is.na(data$USASTAT
 # Check if all NA values are replaced
 sum(is.na(data$USASTATE))
 
+# Mapping the values in 'CONTCODE' column
+data <- data %>%
+  mutate(CONTCODE = recode(CONTCODE, "X" = "Containerized", "0" = "Non-Containerized"))
 
-# convert TRDTYPE, DISAGMOT, Country, DF, Month, Year
-data[c('TRDTYPE', 'DISAGMOT', 'COUNTRY', 'DF', 'MONTH', 'YEAR')] <- lapply(
-  data[c('TRDTYPE', 'DISAGMOT', 'COUNTRY', 'DF', 'MONTH', 'YEAR')], as.character
-)
+
+
+# Check the result
+unique(data$CONTCODE)
+
+
 
 
 ```
@@ -677,3 +687,334 @@ yearly_statistics <- data %>%
 # print yearly statistics
 print(yearly_statistics)
 ```
+
+Key Findings from the analytic questions:
+
+**What are the top modes of transportation by freight volume and value?**
+
+```{r}
+# Data visualisation based on transportation mode (DISAGMOT)
+mode_description <- c(
+  "1"  = "Vessel",
+  "3" = "Air",
+  "4" = "Mail (U.S. Post Service)",
+  "5" = "Truck",
+  "6" = "Rail",
+  "7" = "Pipeline",
+  "8" = "Other",
+  "9" = "Foreign Trade Zones (FTZs)"
+)
+
+# plotting the freight value by mode across the years
+transportation_mode <- ggplot(data, aes(
+  x = YEAR, y = VALUE / 1e6,
+  fill = factor(DISAGMOT)
+)) + geom_bar(stat = "identity", position = "dodge") +
+  labs(
+    title = "Top Modes of Transportation by Freight Value",
+    x = "Year",
+    y = "Value (in millions)"
+  ) + 
+  theme_minimal() +
+  scale_fill_manual(
+    values = RColorBrewer::brewer.pal(8, "Set2"),  # Choosing a color palette with enough colors
+    labels = mode_description,                    # Custom labels for transportation modes
+    name = "Transportation Mode"
+  )
+
+# print transportation mode
+transportation_mode
+```
+
+The bar chart above shows the distribution of freight value (in millions of USD) by transportation mode for each year. Each mode is represented by a distinct colour:
+
+Key Observations:
+
+1\. Trucks dominate the freight value across most years, indicating their importance in domestic and regional transportation.
+
+2\. Air transportation, while less significant in terms of value, consistently contributes a notable portion of the freight value, highlighting its role in high-value shipments.
+
+3\. Pipelines and vessels also contribute significantly, particularly for specific years where bulk commodities like oil or goods with high shipping requirements were involved.
+
+**What is the trend of freight value over time?**
+
+```{r}
+# Run the analysis for years
+years <- c(2020, 2021, 2022, 2023, 2024)
+
+analyse_yearly_data <- function(data, year) {
+  # filter data for the given year and aggregate by month
+  monthly_summary <- data %>% 
+    filter(YEAR == year) %>% 
+    group_by(MONTH) %>% 
+    summarise(Total_Value = sum(VALUE, na.rm = T)) %>% 
+    mutate(
+      Monthly_label = factor(MONTH, levels = 1:12, labels = month.name)
+    ) %>% 
+    arrange(MONTH)
+  
+  # print monthly summary
+  monthly_summary
+  
+  # plot the data 
+  ggplot(monthly_summary, aes(
+    x = Monthly_label, y = Total_Value
+  )) + 
+    geom_line(color = "blue", linewidth = 1.2) +
+    geom_point(color = "red", size = 3) +
+    scale_y_continuous(
+      # round the y axis to millions
+      labels = scales::label_number(scale = 1e-6, suffix = "M", accuracy = 0.01)
+    ) +
+    labs(
+      title = paste("Monthly Freight Value in", year),
+      x = "Month",
+      y = "Total Freight Value (USD)"
+    ) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+}
+
+# using the for loop 
+for(year in years) {
+  print(paste("Processing data for year:", year))
+  print(analyse_yearly_data(data, year))
+}
+
+
+```
+
+Analysis from 2020:
+
+-   High Point: Freight value peaks in **January**,likely due to increased shipment demand before global COVID-19 lock-downs.
+
+-   Low Point: Freight value dips in April and May corresponding to the start of significant international shipping restrictions.
+
+Analysis from 2021:
+
+-   High Point:
+
+-   Low Point:
+
+Analysis from 2022:
+
+-   High Point:
+
+-   Low Point:
+
+Analysis from 2023:
+
+-   High Point:
+
+-   Low Point:
+
+Analysis from 2024:
+
+-   High Point:
+
+-   Low Point:
+
+**Which US states contributes the most to ship weight**
+
+```{r}
+for(year in years) {
+  # filter data for the current year
+  yearly_data <- data %>%  filter(YEAR == year)
+  
+  # summarize the total freight (SHIPWT) by state 
+  state_freight_summary <- yearly_data %>% 
+    group_by(USASTATE) %>% 
+    summarise(Total_ShipWt = sum(SHIPWT, na.rm = T)) %>% 
+    arrange(desc(Total_ShipWt)) # sort by total freight
+
+ # Limit to top 10 states for better readability
+  state_freight_summary <- head(state_freight_summary, 10) %>% 
+  filter(!is.na(USASTATE) & USASTATE != "")
+
+# Create a bar plot of the freight weight by US state for the current year
+  plot <- ggplot(state_freight_summary, aes(x = reorder(USASTATE, Total_ShipWt), y = Total_ShipWt / 1e3)) +
+    geom_col(fill = "steelblue") +   # Bar color
+    coord_flip() +                   # Flip the bars horizontally
+    labs(
+      title = paste("Total Ship Weight by US State (", year, ")", sep = ""),
+      x = "State",
+      y = "Weight (in thousands of kilograms)"
+    ) +
+    theme_minimal() +                # Simple clean theme
+    theme(
+      axis.text.x = element_text(size = 10),  # Adjust text size for better legibility
+      axis.text.y = element_text(size = 10),  # Adjust y-axis text size
+      plot.margin = margin(10, 50, 10, 10)    # Increase the space around the plot to avoid cutting off labels
+    )
+  
+  # Print the plot for the current year
+  print(plot)
+}
+```
+
+Analysis:
+
+-   The states with the highest freight weight include Texas followed by Illinois and Ohio
+
+-   Texas led by a significant margin throughout the years from 2020 to 2024, reflecting its central role, in freight logistics, possibly due to its major ports and highways.
+
+**What is the correlation between Freight Value, Shipment Weight and Freight Charges for each year from 2020 to 2024?**
+
+```{r}
+# Correlation Between Value, Weight, and Freight Charges
+# List of years to process
+years <- c(2020, 2021, 2022, 2023, 2024)
+# Loop through each year to calculate and print the correlation matrix
+for (year in years) {
+  # Filter the data for the current year
+  yearly_data <- data %>% filter(YEAR == as.character(year))
+  
+  # Calculate the correlation matrix for VALUE, SHIPWT, and FREIGHT_CHARGES
+  correlation_matrix <- yearly_data %>%
+    select(VALUE, SHIPWT, FREIGHT_CHARGES) %>%
+    cor(use = "complete.obs") # consider rows where there are no missing values(NA)
+  
+  # Print the correlation matrix for the current year
+  print(paste("Correlation Matrix for Year:", year))
+  print(correlation_matrix)
+}
+
+# Initialise an empty data frame for storing correlation data
+correlation_data <- data.frame()
+
+# Loop through each year to calculate correlations
+for (year in years) {
+  yearly_data <- data %>% filter(YEAR == as.character(year))
+  corr_matrix <- yearly_data %>%
+    select(VALUE, SHIPWT, FREIGHT_CHARGES) %>%
+    cor(use = "complete.obs")
+  
+  # Convert the correlation matrix to a long format
+  melted_corr <- melt(corr_matrix)
+  melted_corr$Year <- year
+  
+  # Append to the correlation_data data frame
+  correlation_data <- rbind(correlation_data, melted_corr)
+}
+
+# Round the correlation values to 2 decimal places
+correlation_data$value <- round(correlation_data$value, 2)
+
+# Plot heatmap with labels
+ggplot(correlation_data, aes(x = Var1, y = Var2, fill = value)) +
+  geom_tile() +
+  geom_text(aes(label = value), colour = "black", size = 3) +  # to add text labels
+  facet_wrap(~ Year) +
+  scale_fill_gradient2(
+    low = "blue", mid = "white", high = "red",
+    midpoint = 0, limits = c(-1, 1),
+    name = "Correlation"
+  ) +
+  labs(
+    title = "Correlation Heatmaps (2020–2024) with Values",
+    x = "Variable", y = "Variable"
+  ) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 12),  #facet title size
+    axis.text.x = element_text(angle = 45, hjust = 1)  # to Rotate x-axis labels
+  )
+
+
+```
+
+Analysis from 2020:
+
+-   Freight Value vs. Shipment Weight (0.44): A moderate positive correlation indicates that higher shipment weight is associated with an increase in freight value, though the relationship is not strong.
+
+-   Freight Value vs. Freight Charges (0.48): A moderate positive correlation suggests that higher freight value2021: is moderately associated with higher freight charges.
+
+-   Shipment Weight vs. Freight Charges (0.87): A strong positive correlation implies that heavier shipments tend to incur higher freight charges.
+
+Analysis from 2021:
+
+-   Freight Value vs. Shipment Weight (0.49): A moderate positive correlation, slightly stronger than in 2020, shows an increasing association between shipment weight and freight value.
+
+-   Freight Value vs. Freight Charges (0.53): A moderate positive correlation, also stronger than in 2020, highlights a growing relationship between freight value and freight charges.
+
+-   Shipment Weight vs. Freight Charges (0.87): The strong positive correlation remains consistent, indicating a continued link between shipment weight and charges.
+
+Analysis from 2022:
+
+-   Freight Value vs. Shipment Weight (0.65): A stronger positive correlation reflects a significant relationship between the value of goods and their shipment weight this year.
+
+-   Freight Value vs. Freight Charges (0.63): The correlation strengthens, showing a notable association between freight value and charges.
+
+-   Shipment Weight vs. Freight Charges (0.83): The strong positive correlation decreases slightly but remains substantial.
+
+Analysis for 2023:
+
+-   Freight Value vs. Shipment Weight (0.56): A moderate positive correlation, lower than 2022, indicates the relationship between value and shipment weight weakened slightly.
+
+-   Freight Value vs. Freight Charges (0.57): A consistent moderate positive correlation reflects a stable association between freight value and charges.
+
+-   Shipment Weight vs. Freight Charges (0.86): The strong positive correlation indicates the relationship remains solid between shipment weight and charges
+
+Analysis for 2024:
+
+-   Freight Value vs. Shipment Weight (0.53): A moderate positive correlation, slightly lower than in 2023, suggests a declining association.
+
+-   Freight Value vs. Freight Charges (0.57): The consistent correlation indicates that freight value and charges remain moderately linked.
+
+-   Shipment Weight vs. Freight Charges (0.91): A very strong positive correlation indicates an almost linear relationship, suggesting that heavier shipments are nearly directly proportional to higher freight charges.
+
+Overall Interpretation:
+
+1.  Shipment Weight and Freight Charges: Across all years, there is a consistently strong positive correlation (above 0.83), with the strongest in 2024 (0.91). This indicates that shipment weight is a critical determinant of freight charges.
+
+2.  Freight Value and Shipment Weight: The correlation is generally moderate, ranging from 0.44 in 2020 to a peak of 0.65 in 2022, and then slightly declining afterward. This suggests that heavier shipments tend to have higher values, but the relationship is not as strong or consistent as with freight charges.
+
+3.  Freight Value and Freight Charges: The correlation is moderate across all years, ranging from 0.48 to 0.63, indicating that while higher-value shipments often result in higher charges, other factors also contribute.
+
+Key Insights:
+
+-   Shipment weight is the dominant factor influencing freight charges.
+
+-   While freight value contributes to determining charges, its impact is moderate compared to shipment weight.
+
+-   The year 2022 shows the strongest correlations across all variables, possibly indicating unusual or specific market conditions.
+
+**How has the total freight value changed over the years from 2020 to 2024?**
+
+```{r}
+# Yearly trend Analysis
+# Freight Value by Year
+yearly_trends <- data %>%
+  group_by(YEAR) %>%
+  summarise(Total_Value = sum(VALUE, na.rm = TRUE))
+
+ggplot(yearly_trends, aes(x = as.factor(YEAR), y = Total_Value / 1e6)) +
+  geom_line(group = 1, color = "blue") +
+  labs(
+    title = "Yearly Freight Value Trends",
+    x = "Year",
+    y = "Value (in millions)"
+  ) +
+  theme_minimal()
+```
+
+Analysis of Freight Value Trends (2020-2024):
+
+From the data:
+
+-   The freight value increased steadily from 2020 to 2022.
+
+-   There was a notable jump in 2021 and 2022, with 2022 to 2023 having the highest freight value.
+
+-   A decline in 2024.
+
+-   This suggests consistent growth in freight activities or higher-value shipments over the years.
+
+Insights:
+
+The significant year-on-year increase from 2020 to 2023 could indicate:
+
+-   Increased global trade.
+
+-   An expansion in freight services, especially after 2020 (potentially post-pandemic recovery)
