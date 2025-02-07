@@ -1,4 +1,62 @@
+---
+title: "TransBorderFreight Data Analysis"
+author: "Ebenezer Omari"
+output: html_document
+---
 
+# Transborder Freight Data Analysis
+
+This project analyses transportation data from the **Bureau of Transportation Statistics (BTS)** to uncover insights into cross-border freight's efficiency, safety, and environmental impacts across modes such as road, rail, air, and water.
+
+## CRISP-DM Framework
+
+The analysis followed the CRISP-DM methodology, which includes the following stages:
+
+## 1. Business Understanding
+
+The objectives were defined below, followed by the formulation of analytical questions to guide the analysis process.
+
+### Objectives
+
+-   **Freight Patterns**: Identify trends in freight volume, routing, and modes of transport.
+-   **Operational Efficiency**: Detect inefficiencies and propose resource optimization strategies.
+-   **Environmental Impact**: Assess emissions and fuel usage, recommending sustainability improvements.
+-   **Safety Analysis**: Evaluate incidents and suggest safety protocol enhancements.
+-   **Economic Effects**: Analyze the impact of trade patterns, policies, and global disruptions.
+-   **Data-Driven Solutions**: Provide actionable recommendations for improving freight systems.
+
+### Analytic Questions:
+
+a.  What are the top modes of transportation by freight value?
+b.  How does freight movement vary across states and countries?
+c.  What is the trend of freight value over time?
+d.  Which state contributes the most to freight weight?
+e.  Which country contributes the most to freight value
+f.  What patterns exist between shipment weight and charges?
+g.  What is the correlation between Freight Value, Shipment Weight and Freight Charges for each year from 2020 to 2024?
+h.  How has the total freight value changed over the years from 2020 to 2024?
+
+## 2. Data Understanding
+
+The data set consisted of 6,517,225 records and 15 variables. Key variables included:
+
+a\. TRDTYPE: Transaction type.
+
+b\. USASTATE, MEXSTATE, CANPROV: Regions involved in freight movement.
+
+c\. VALUE: Value of goods in USD.
+
+d\. SHIPWT: Shipment weight.
+
+e\. FREIGHT_CHARGES: Associated transportation costs.
+
+f\. MONTH
+
+g\. YEAR
+
+## 3. Data Preparation
+
+```{r}
 # load libraries 
 library(janitor)
 library(dplyr)
@@ -465,7 +523,7 @@ colnames(data_2024)
 data <- bind_rows(data_2020, data_2021, data_2022, data_2023, data_2024)
 
 # checked for duplicates
-sum(duplicated(data))
+# sum(duplicated(data))
 
 # check for NA's or empty cells
 colSums(is.na(data) | data == "")
@@ -551,8 +609,11 @@ data[c('TRDTYPE', 'DISAGMOT', 'COUNTRY', 'DF', 'MONTH', 'YEAR')] <- lapply(
 )
 
 
-# ANALYSIS
+```
 
+## 4. Analysis and Visualization
+
+```{r}
 # summary statistics aggregated across the entire data set
 
 options(scipen = 999) # set to avoid scientific notation 
@@ -569,133 +630,13 @@ summary_statistics <- data %>%
 
 summary_statistics
 format(summary_statistics, scientific = F, big.mark = ",")
+print(summary_statistics)
+```
 
+The dataset covered multiple years and regions, with data on road, rail, air sand water transport modes. Summary statistics across the dataset (2020 – 2024) revealed:
 
-# Grouping data by YEAR and calculating yearly statistics
-yearly_statistics <- data %>% 
-  group_by(YEAR) %>%
-  summarise(
-    Total_Value = sum(VALUE, na.rm = T),
-    Total_ShipWt = sum(SHIPWT, na.rm = T),
-    Total_Freight_Charges = sum(FREIGHT_CHARGES, na.rm = T),
-    Avg_Value = mean(VALUE, na.rm = T),
-    Avg_ShipWt = mean(SHIPWT, na.rm = T),
-    Avg_Freight_Charges = mean(FREIGHT_CHARGES, na.rm = T)
-  ) %>%
-  # round the numbers to  3 decimals
-  mutate(
-    Total_Value = round(Total_Value /1e9, 3), # convert to billions and round
-    Total_ShipWt = round(Total_ShipWt /1e9, 3), # convert to billions and round
-    Total_Freight_Charges = round(Total_Freight_Charges /1e6), # convert to millions and round
-    Avg_Value = round(Avg_Value, 3),
-    Avg_ShipWt = round(Avg_ShipWt, 3),
-    Avg_Freight_Charges = round(Avg_Freight_Charges, 3)
-  ) %>% 
-  # Add units for clarity
-  mutate(
-    Total_Value = paste(Total_Value, "B", sep = ""),
-    Total_ShipWt = paste(Total_ShipWt, "B", sep = ""),
-    Total_Freight_Charges = paste(Total_Freight_Charges, "M", sep = ""),
-    Avg_Value = paste(Avg_Value, "M", sep = ""),
-    Avg_ShipWt = paste(Avg_ShipWt, "kg", sep = ""),
-    Avg_Freight_Charges = paste(Avg_Freight_Charges, "M", sep = "")
-  )
+Total Value: The cumulative value of all freight transactions across the data set is 19.20 trillion USD. This metric highlights the enormous scale of trans-border freight in terms of monetary value.
 
-# print yearly statistics
-yearly_statistics
+Total Shipment Weight: The total shipping weight of goods transported is 7.82 trillion kg. This gave an idea of the physical scale of goods being moved.
 
-
-# Data visualisation
-
-# Data visualisation based on transportation mode (DISAGMOT)
-mode_description <- c(
-  "1"  = "Vessel",
-  "3" = "Air",
-  "4" = "Mail (U.S. Post Service)",
-  "5" = "Truck",
-  "6" = "Rail",
-  "7" = "Pipeline",
-  "8" = "Other",
-  "9" = "Foreign Trade Zones (FTZs)"
-)
-
-# plotting the freight value by mode across the years
-transportation_mode <- ggplot(data, aes(
-  x = YEAR, y = VALUE / 1e6,
-  fill = factor(DISAGMOT)
-)) + geom_bar(stat = "identity", position = "dodge") +
-  labs(
-    title = "Top Modes of Transportation by Freight Value",
-    x = "Year",
-    y = "Value (in millions)"
-  ) + 
-  theme_minimal() +
-  scale_fill_manual(
-    values = RColorBrewer::brewer.pal(8, "Set2"),  # Choosing a color palette with enough colors
-    labels = mode_description,                    # Custom labels for transportation modes
-    name = "Transportation Mode"
-  )
-
-# print transportation mode
-transportation_mode
-
-
-
-# data visualisation of freight value over time for each year
-# Run the analysis for years
-years <- c(2020, 2021, 2022, 2023, 2024)
-
-analyse_yearly_data <- function(data, year) {
-  # filter data for the given year and aggregate by month
-  monthly_summary <- data %>% 
-    filter(YEAR == year) %>% 
-    group_by(MONTH) %>% 
-    summarise(Total_Value = sum(VALUE, na.rm = T)) %>% 
-    mutate(
-      Monthly_label = factor(MONTH, levels = 1:12, labels = month.name)
-    ) %>% 
-    arrange(MONTH)
-  
-  # print monthly summary
-  monthly_summary
-  
-  # plot the data 
-  ggplot(monthly_summary, aes(
-    x = Monthly_label, y = Total_Value
-  )) + 
-    geom_line(color = "blue", linewidth = 1.2) +
-    geom_point(color = "red", size = 3) +
-    scale_y_continuous(
-      # round the y axis to millions
-      labels = scales::label_number(scale = 1e-6, suffix = "M", accuracy = 0.01)
-    ) +
-    labs(
-      title = paste("Monthly Freight Value in", year),
-      x = "Month",
-      y = "Total Freight Value (USD)"
-    ) +
-    theme_minimal() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
-  
-}
-
-# using the for loop 
-for(year in years) {
-  print(paste("Processing data for year:", year))
-  print(analyse_yearly_data(data, year))
-}
-
-
-
-
-# data visualisation on ShipWt by US States
-for(year in years) {
-  # filter data for the current year
-  yearly_data <- data %>%  filter(YEAR == year)
-  
-  # summarize the total freight (SHIPWT) by state 
-  state_freight_summary <- yearly_data %>% 
-    group_by(USASTATE) %>% 
-    summarise(Total_ShipWt = sum(SHIPWT, na.rm = T)) %>% 
-    arrange(desc(Total_ShipWt)) # sort by total freight
-}
+Total Freight Charges: The total freight charges across all transactions amount to 251.02 billion USD, showing the financial cost of transportation.
