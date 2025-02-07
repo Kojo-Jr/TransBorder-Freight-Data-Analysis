@@ -63,7 +63,9 @@ library(dplyr)
 library(ggplot2)
 library(scales)
 library(reshape2)
+```
 
+```{r}
 # data cleaning
 
 # 2020
@@ -640,3 +642,38 @@ Total Value: The cumulative value of all freight transactions across the data se
 Total Shipment Weight: The total shipping weight of goods transported is 7.82 trillion kg. This gave an idea of the physical scale of goods being moved.
 
 Total Freight Charges: The total freight charges across all transactions amount to 251.02 billion USD, showing the financial cost of transportation.
+
+```{r}
+# Grouping data by YEAR and calculating yearly statistics
+yearly_statistics <- data %>% 
+  group_by(YEAR) %>%
+  summarise(
+    Total_Value = sum(VALUE, na.rm = T),
+    Total_ShipWt = sum(SHIPWT, na.rm = T),
+    Total_Freight_Charges = sum(FREIGHT_CHARGES, na.rm = T),
+    Avg_Value = mean(VALUE, na.rm = T),
+    Avg_ShipWt = mean(SHIPWT, na.rm = T),
+    Avg_Freight_Charges = mean(FREIGHT_CHARGES, na.rm = T)
+  ) %>%
+  # round the numbers to  3 decimals
+  mutate(
+    Total_Value = round(Total_Value /1e9, 3), # convert to billions and round
+    Total_ShipWt = round(Total_ShipWt /1e9, 3), # convert to billions and round
+    Total_Freight_Charges = round(Total_Freight_Charges /1e6), # convert to millions and round
+    Avg_Value = round(Avg_Value, 3),
+    Avg_ShipWt = round(Avg_ShipWt, 3),
+    Avg_Freight_Charges = round(Avg_Freight_Charges, 3)
+  ) %>% 
+  # Add units for clarity
+  mutate(
+    Total_Value = paste(Total_Value, "B", sep = ""),
+    Total_ShipWt = paste(Total_ShipWt, "B", sep = ""),
+    Total_Freight_Charges = paste(Total_Freight_Charges, "M", sep = ""),
+    Avg_Value = paste(Avg_Value, "M", sep = ""),
+    Avg_ShipWt = paste(Avg_ShipWt, "kg", sep = ""),
+    Avg_Freight_Charges = paste(Avg_Freight_Charges, "M", sep = "")
+  )
+
+# print yearly statistics
+print(yearly_statistics)
+```
