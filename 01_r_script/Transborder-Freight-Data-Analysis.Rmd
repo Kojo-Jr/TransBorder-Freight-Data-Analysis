@@ -1036,5 +1036,22 @@ The significant year-on-year increase from 2020 to 2023 could indicate:
 **How do import and export values compare across different states in the US?**
 
 ```{r}
+# Prepare the data for the US state
+us_trade <- data %>% 
+  group_by(TRDTYPE, USASTATE) %>% 
+  summarise(Total_Value = sum(VALUE, na.rm = TRUE)) %>% 
+  mutate(Country = "USA")
+
+# Visual the trade values of import and export amongst USASTATES
+ggplot(us_trade, aes(x=USASTATE, y = Total_Value, fill = factor(TRDTYPE, labels = c("Export", "Import")))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs (
+    title = "Trade Values for US States Over The Past Four Years",
+    x = "USASTATE",
+    y = "Total Trade Value (dollars)",
+    fill = "Trade Type"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle=45, hjust = 1))
 
 ```
