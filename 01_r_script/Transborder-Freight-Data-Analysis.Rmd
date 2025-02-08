@@ -1,7 +1,7 @@
 ---
 title: "TransBorderFreight Data Analysis"
 author: "Ebenezer Omari"
-output: html_document
+output: html_output
 ---
 
 # Transborder Freight Data Analysis
@@ -31,7 +31,7 @@ a.  What are the top modes of transportation by freight value?
 b.  Which US state contributes the most to freight weight?
 c.  What is the correlation between Freight Value, Shipment Weight and Freight Charges for each year from 2020 to 2024?
 d.  How has the total freight value changed over the years from 2020 to 2024?
-e.  Which country contributes the most to freight value
+e.  How do import and export values compare across different states in the US?
 f.  What patterns exist between shipment weight and charges?
 g.  How has the total freight value changed over the years from 2020 to 2024?
 
@@ -606,8 +606,24 @@ depe_mapping <- c(
 # Replace NA values in USASTATE based on DEPE mapping
 data$USASTATE[is.na(data$USASTATE)] <- depe_mapping[data$DEPE[is.na(data$USASTATE)]]
 
+
+
+
+
+```
+
+```{r}
 # Check if all NA values are replaced
 sum(is.na(data$USASTATE))
+
+# fill the remaining NA's in the USASTATE, DF, COMMODITY2
+# Columns to fill
+columns_to_fill <- c("USASTATE", "DF", "COMMODITY2")
+
+# Fill missing values with the most frequent value
+data <- data %>%
+  mutate(across(all_of(columns_to_fill), ~ replace(., is.na(.), names(which.max(table(na.omit(.)))))))
+
 
 # Mapping the values in 'CONTCODE' column
 data <- data %>%
@@ -617,8 +633,6 @@ data <- data %>%
 
 # Check the result
 unique(data$CONTCODE)
-
-
 
 
 ```
@@ -645,7 +659,7 @@ format(summary_statistics, scientific = F, big.mark = ",")
 print(summary_statistics)
 ```
 
-The dataset covered multiple years and regions, with data on road, rail, air sand water transport modes. Summary statistics across the dataset (2020 – 2024) revealed:
+The data set covered multiple years and regions, with data on road, rail, air sand water transport modes. Summary statistics across the data set (2020 – 2024) revealed:
 
 Total Value: The cumulative value of all freight transactions across the data set is 19.20 trillion USD. This metric highlights the enormous scale of trans-border freight in terms of monetary value.
 
@@ -1018,3 +1032,9 @@ The significant year-on-year increase from 2020 to 2023 could indicate:
 -   Increased global trade.
 
 -   An expansion in freight services, especially after 2020 (potentially post-pandemic recovery)
+
+**How do import and export values compare across different states in the US?**
+
+```{r}
+
+```
