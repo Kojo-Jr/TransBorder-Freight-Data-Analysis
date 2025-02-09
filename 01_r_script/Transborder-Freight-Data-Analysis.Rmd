@@ -32,8 +32,8 @@ b.  Which US state contributes the most to freight weight?
 c.  What is the correlation between Freight Value, Shipment Weight and Freight Charges for each year from 2020 to 2024?
 d.  How has the total freight value changed over the years from 2020 to 2024?
 e.  How do import and export values compare across different states in the US?
-f.  What patterns exist between shipment weight and charges?
-g.  How has the total freight value changed over the years from 2020 to 2024?
+f.  \# Scatter plot with a linear model smoothing line ggplot(data, aes(x = SHIPWT, y = FREIGHT_CHARGES)) + geom_point(alpha = 0.5, color = "blue") + scale_x_log10() + \# Log-scale for shipment weight scale_y_log10() + \# Log-scale for freight charges geom_smooth(method = "lm", se = FALSE, color = "red") + labs( title = "Relationship Between Shipment Weight and Freight Charges", x = "Shipment Weight (log scale)", y = "Freight Charges (log scale)" ) + theme_minimal()
+g.  What are the top modes of transportation by freight value in the US states?
 
 ## 2. Data Understanding
 
@@ -744,11 +744,11 @@ The bar chart above shows the distribution of freight value (in millions of USD)
 
 Key Observations:
 
-1\. Trucks dominate the freight value across most years, indicating their importance in domestic and regional transportation.
+Trucks dominate the freight value across most years, indicating their importance in domestic and regional transportation.
 
-2\. Air transportation, while less significant in terms of value, consistently contributes a notable portion of the freight value, highlighting its role in high-value shipments.
+Air transportation, while less significant in terms of value, consistently contributes a notable portion of the freight value, highlighting its role in high-value shipments.
 
-3\. Pipelines and vessels also contribute significantly, particularly for specific years where bulk commodities like oil or goods with high shipping requirements were involved.
+Pipelines and vessels also contribute significantly, particularly for specific years where bulk commodities like oil or goods with high shipping requirements were involved.
 
 **What is the trend of freight value over time?**
 
@@ -869,9 +869,7 @@ for(year in years) {
 
 Analysis:
 
--   The states with the highest freight weight include Texas followed by Illinois and Ohio
-
--   Texas led by a significant margin throughout the years from 2020 to 2024, reflecting its central role, in freight logistics, possibly due to its major ports and highways.
+The states with the highest freight weight include Texas followed by Illinois and Ohio. Texas led by a significant margin throughout the years from 2020 to 2024, reflecting its central role, in freight logistics, possibly due to its major ports and highways.
 
 **What is the correlation between Freight Value, Shipment Weight and Freight Charges for each year from 2020 to 2024?**
 
@@ -1019,9 +1017,7 @@ From the data:
 
 -   The freight value increased steadily from 2020 to 2022.
 
--   There was a notable jump in 2021 and 2022, with 2022 to 2023 having the highest freight value.
-
--   A decline in 2024.
+-   There was a notable jump in 2021 and 2022, with 2022 to 2023 having the highest freight value and a decline in 2024.
 
 -   This suggests consistent growth in freight activities or higher-value shipments over the years.
 
@@ -1029,29 +1025,45 @@ Insights:
 
 The significant year-on-year increase from 2020 to 2023 could indicate:
 
--   Increased global trade.
-
--   An expansion in freight services, especially after 2020 (potentially post-pandemic recovery)
+Increased global trade and an expansion in freight services, especially after 2020 (potentially post-pandemic recovery)
 
 **How do import and export values compare across different states in the US?**
 
 ```{r}
-# Prepare the data for the US state
+options(scipen = 999) # Avoid scientific notation
+
+# Prepare the data for the US states
 us_trade <- data %>% 
   group_by(TRDTYPE, USASTATE) %>% 
-  summarise(Total_Value = sum(VALUE, na.rm = TRUE)) %>% 
-  mutate(Country = "USA")
+  summarise(Total_Value = sum(VALUE, na.rm = TRUE), .groups = "drop") %>% 
+  mutate(Country = "USA") 
 
-# Visual the trade values of import and export amongst USASTATES
-ggplot(us_trade, aes(x=USASTATE, y = Total_Value, fill = factor(TRDTYPE, labels = c("Export", "Import")))) +
+# Select the top 10 states based on Total_Value
+us_trade_top10 <- us_trade %>% 
+  slice_max(Total_Value, n = 10)
+
+# Visualise the trade values of import and export amongst the top 10 USA states
+ggplot(us_trade_top10, aes(x = USASTATE, y = Total_Value, fill = factor(TRDTYPE, labels = c("Export", "Import")))) +
   geom_bar(stat = "identity", position = "dodge") +
+  scale_y_continuous(labels = label_number(scale = 1e-12, suffix = "T")) +  # Convert to millions
   labs (
-    title = "Trade Values for US States Over The Past Four Years",
-    x = "USASTATE",
-    y = "Total Trade Value (dollars)",
+    title = "Trade Values for Top 10 US States Over The Past Four Years",
+    x = "US State",
+    y = "Total Trade Value (Trillions of Dollars)",
     fill = "Trade Type"
   ) +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle=45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
 
 ```
+
+### **Trade Value Analysis**
+
+Based on the chart, the total trade value (combining both imports and exports) for these states ranges from 0 to approximately 37 trillion dollars, underscoring that the trade activities in these regions are significant on a global scale.
+
+In particular, Texas stands out with a high import value while also leading in exports, positioning it as a major hub for both inbound and outbound goods. In contrast, California's trade profile is characterized by a substantial import value that far exceeds its export figures.
+
+Moreover, states like Miami, Illinois, and Ohio exhibit trade activity that is almost exclusively import-oriented, with their total trade values remaining below 1 trillion dollars. These insights highlight the diverse trade dynamics across US states, providing a valuable perspective for policy makers and businesses aiming to enhance global trade competitiveness.
+
+Given the range of trade values from 0 to 37 trillion dollars, it's clear that there is a substantial variation in trade activities among these states. Factors such as geographic location, industry focus and infrastructure play significant roles in determining each state's trade value.
