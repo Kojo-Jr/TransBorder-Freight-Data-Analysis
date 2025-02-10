@@ -831,7 +831,11 @@ ggplot(us_trade_mode_top10_agg, aes(x = USASTATE, y = Total_Value / 1e12, fill =
 
 Analysis:
 
-The bar chart above shows the distribution of freight value (in trillions of USD) by transportation mode for the past 4 years in the US states. Each mode is represented by a distinct colour:
+The bar chart above illustrates the distribution of freight value (in trillions of USD) by transportation mode over the past four years across the top 10 US states. Each transportation mode is color-coded, allowing for easy differentiation.
+
+Notably, truck transportation overwhelmingly dominates the freight value. Texas is particularly prominent, with truck freight value exceeding 4.5 trillion USD, far surpassing the contributions of other states. California also shows significant activity, recording over 1 trillion USD in truck freight value. In contrast, other modes such as rail, air, and pipeline consistently contribute less, with freight values remaining below 1 trillion USD across these states.
+
+These observations indicate that truck transport is the critical driver of freight value in the US, especially in key states like Texas and California, while the contribution of other modes is relatively modest.
 
 **Which US states contributes the most to ship weight**
 
@@ -965,7 +969,7 @@ Analysis from 2022:
 
 -   Freight Value vs. Freight Charges (0.64): The correlation strengthens, showing a notable association between freight value and charges.
 
--   Shipment Weight vs. Freight Charges (0.83): The strong positive correlation decreases slightly but remains substantial.
+-   Shipment Weight vs. Freight Charges (0.83): The strong positive correlation decreases slightly but remains substantial.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
 
 Analysis for 2023:
 
