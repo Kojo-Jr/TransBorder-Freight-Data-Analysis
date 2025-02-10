@@ -1068,13 +1068,13 @@ ggplot(us_trade_top10, aes(x = USASTATE, y = Total_Value, fill = factor(TRDTYPE,
 
 ### **Trade Value Analysis**
 
-Based on the chart, the total trade value (combining both imports and exports) for these states ranges from 0 to approximately 37 trillion dollars, underscoring that the trade activities in these regions are significant on a global scale.
+Based on the chart, the total trade value (combining both imports and exports) for these states ranges from 0 to approximately 2.5 trillion dollars, underscoring that the trade activities in these regions are significant on a global scale.
 
 In particular, Texas stands out with a high import value while also leading in exports, positioning it as a major hub for both inbound and outbound goods. In contrast, California's trade profile is characterized by a substantial import value that far exceeds its export figures.
 
 Moreover, states like Miami, Illinois, and Ohio exhibit trade activity that is almost exclusively import-oriented, with their total trade values remaining below 1 trillion dollars. These insights highlight the diverse trade dynamics across US states, providing a valuable perspective for policy makers and businesses aiming to enhance global trade competitiveness.
 
-Given the range of trade values from 0 to 37 trillion dollars, it's clear that there is a substantial variation in trade activities among these states. Factors such as geographic location, industry focus and infrastructure play significant roles in determining each state's trade value.
+Given the range of trade values from 0 to 2.5 trillion dollars, it's clear that there is a substantial variation in trade activities among these states. Factors such as geographic location, industry focus and infrastructure play significant roles in determining each state's trade value.
 
 **What is the variability in shipment weights for exports versus imports?**
 
