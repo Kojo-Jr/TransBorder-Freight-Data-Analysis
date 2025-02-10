@@ -837,7 +837,7 @@ Notably, truck transportation overwhelmingly dominates the freight value. Texas 
 
 These observations indicate that truck transport is the critical driver of freight value in the US, especially in key states like Texas and California, while the contribution of other modes is relatively modest.
 
-**Which US states contributes the most to ship weight**
+**Which US state contributes the most to ship weight**
 
 ```{r}
 # List of years to process
