@@ -769,7 +769,7 @@ Pipelines and vessels also contribute significantly, particularly for specific y
 **What are the top modes of transportation by freight value in the US states?**
 
 ```{r}
-
+library(RColorBrewer)
 # Filter data for the desired years
 yearly_data <- data %>% 
   filter(YEAR %in% c(2020, 2021, 2022, 2023, 2024))
@@ -777,12 +777,12 @@ yearly_data <- data %>%
 # Summarize freight value by YEAR, USASTATE, and DISAGMOT
 us_trade_mode <- yearly_data %>%
   group_by(YEAR, USASTATE, DISAGMOT) %>%
-  summarise(Total_Value = sum(VALUE, na.rm = TRUE), .groups = "drop")
+  summarise(Total_Value = sum(VALUE), .groups = "drop")
 
 # Get overall total freight value by state
 us_state_totals <- yearly_data %>%
   group_by(USASTATE) %>%
-  summarise(Overall_Value = sum(VALUE, na.rm = TRUE), .groups = "drop") %>%
+  summarise(Overall_Value = sum(VALUE), .groups = "drop") %>%
   arrange(desc(Overall_Value))
 
 # Select the top 10 states based on Overall_Value
@@ -797,7 +797,7 @@ us_trade_mode_top10 <- us_trade_mode %>%
 # Aggregate the filtered data across years for each state and mode
 us_trade_mode_top10_agg <- us_trade_mode_top10 %>%
   group_by(USASTATE, DISAGMOT) %>%
-  summarise(Total_Value = sum(Total_Value, na.rm = TRUE), .groups = "drop")
+  summarise(Total_Value = sum(Total_Value), .groups = "drop")
 
 # Create a mapping for DISAGMOT codes to descriptive names
 mode_description <- c(
@@ -831,7 +831,7 @@ ggplot(us_trade_mode_top10_agg, aes(x = USASTATE, y = Total_Value / 1e12, fill =
 
 Analysis:
 
-The bar chart above shows the distribution of freight value (in millions of USD) by transportation mode for the past 4 years in the US states. Each mode is represented by a distinct colour:
+The bar chart above shows the distribution of freight value (in trillions of USD) by transportation mode for the past 4 years in the US states. Each mode is represented by a distinct colour:
 
 **Which US states contributes the most to ship weight**
 
@@ -945,25 +945,25 @@ ggplot(correlation_data, aes(x = Var1, y = Var2, fill = value)) +
 
 Analysis from 2020:
 
--   Freight Value vs. Shipment Weight (0.44): A moderate positive correlation indicates that higher shipment weight is associated with an increase in freight value, though the relationship is not strong.
+-   Freight Value vs. Shipment Weight (0.40): A moderate positive correlation indicates that higher shipment weight is associated with an increase in freight value, though the relationship is not strong.
 
--   Freight Value vs. Freight Charges (0.48): A moderate positive correlation suggests that higher freight value2021: is moderately associated with higher freight charges.
+-   Freight Value vs. Freight Charges (0.45): A moderate positive correlation suggests that higher freight value2021: is moderately associated with higher freight charges.
 
--   Shipment Weight vs. Freight Charges (0.87): A strong positive correlation implies that heavier shipments tend to incur higher freight charges.
+-   Shipment Weight vs. Freight Charges (0.86): A strong positive correlation implies that heavier shipments tend to incur higher freight charges.
 
 Analysis from 2021:
 
--   Freight Value vs. Shipment Weight (0.49): A moderate positive correlation, slightly stronger than in 2020, shows an increasing association between shipment weight and freight value.
+-   Freight Value vs. Shipment Weight (0.54): A moderate positive correlation, slightly stronger than in 2020, shows an increasing association between shipment weight and freight value.
 
--   Freight Value vs. Freight Charges (0.53): A moderate positive correlation, also stronger than in 2020, highlights a growing relationship between freight value and freight charges.
+-   Freight Value vs. Freight Charges (0.57): A moderate positive correlation, also stronger than in 2020, highlights a growing relationship between freight value and freight charges.
 
 -   Shipment Weight vs. Freight Charges (0.87): The strong positive correlation remains consistent, indicating a continued link between shipment weight and charges.
 
 Analysis from 2022:
 
--   Freight Value vs. Shipment Weight (0.65): A stronger positive correlation reflects a significant relationship between the value of goods and their shipment weight this year.
+-   Freight Value vs. Shipment Weight (0.64): A stronger positive correlation reflects a significant relationship between the value of goods and their shipment weight this year.
 
--   Freight Value vs. Freight Charges (0.63): The correlation strengthens, showing a notable association between freight value and charges.
+-   Freight Value vs. Freight Charges (0.64): The correlation strengthens, showing a notable association between freight value and charges.
 
 -   Shipment Weight vs. Freight Charges (0.83): The strong positive correlation decreases slightly but remains substantial.
 
@@ -971,9 +971,9 @@ Analysis for 2023:
 
 -   Freight Value vs. Shipment Weight (0.56): A moderate positive correlation, lower than 2022, indicates the relationship between value and shipment weight weakened slightly.
 
--   Freight Value vs. Freight Charges (0.57): A consistent moderate positive correlation reflects a stable association between freight value and charges.
+-   Freight Value vs. Freight Charges (0.59): A consistent moderate positive correlation reflects a stable association between freight value and charges.
 
--   Shipment Weight vs. Freight Charges (0.86): The strong positive correlation indicates the relationship remains solid between shipment weight and charges
+-   Shipment Weight vs. Freight Charges (0.89): The strong positive correlation indicates the relationship remains solid between shipment weight and charges
 
 Analysis for 2024:
 
@@ -985,11 +985,11 @@ Analysis for 2024:
 
 Overall Interpretation:
 
-1.  Shipment Weight and Freight Charges: Across all years, there is a consistently strong positive correlation (above 0.83), with the strongest in 2024 (0.91). This indicates that shipment weight is a critical determinant of freight charges.
+1.  Shipment Weight and Freight Charges: Across all years, there is a consistently strong positive correlation (above 0.89), with the strongest in 2024 (0.91). This indicates that shipment weight is a critical determinant of freight charges.
 
-2.  Freight Value and Shipment Weight: The correlation is generally moderate, ranging from 0.44 in 2020 to a peak of 0.65 in 2022, and then slightly declining afterward. This suggests that heavier shipments tend to have higher values, but the relationship is not as strong or consistent as with freight charges.
+2.  Freight Value and Shipment Weight: The correlation is generally moderate, ranging from 0.40 in 2020 to a peak of 0.64 in 2022, and then slightly declining afterward. This suggests that heavier shipments tend to have higher values, but the relationship is not as strong or consistent as with freight charges.
 
-3.  Freight Value and Freight Charges: The correlation is moderate across all years, ranging from 0.48 to 0.63, indicating that while higher-value shipments often result in higher charges, other factors also contribute.
+3.  Freight Value and Freight Charges: The correlation is moderate across all years, ranging from 0.45 to 0.64, indicating that while higher-value shipments often result in higher charges, other factors also contribute.
 
 Key Insights:
 
@@ -1024,7 +1024,11 @@ From the data:
 
 -   The freight value increased steadily from 2020 to 2022.
 
--   There was a notable jump in 2021 and 2022, with 2022 to 2023 having the highest freight value and a decline in 2024.
+-   The notable jump in 2021 and 2022 could reflect a post-2020 recovery in global trade, potentially spurred by the easing of pandemic restrictions,
+
+-   The freight value remained very similar between 2022 and 2023, indicating that the growth peaked around 2022–2023, with 2023 having the highest freight value.
+
+-   The decline in 2024 suggests that either the volume or value of shipments decreased. This drop might signal a market correction, changes in trade patterns or other external factors affecting freight services.
 
 -   This suggests consistent growth in freight activities or higher-value shipments over the years.
 
@@ -1033,6 +1037,8 @@ Insights:
 The significant year-on-year increase from 2020 to 2023 could indicate:
 
 Increased global trade and an expansion in freight services, especially after 2020 (potentially post-pandemic recovery)
+
+The decline in 2024 is noteworthy and may warrant further investigation to understand the underlying reasons such as economic shifts, changes in trade policy or other market dynamics.
 
 **How do import and export values compare across different states in the US?**
 
