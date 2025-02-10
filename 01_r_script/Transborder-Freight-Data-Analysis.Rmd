@@ -1,10 +1,10 @@
 ---
-title: "TransBorderFreight Data Analysis"
+title: "Trans-borderFreight Data Analysis"
 author: "Ebenezer Omari"
 output: html_output
 ---
 
-# Transborder Freight Data Analysis
+# Trans-border Freight Data Analysis
 
 This project analyses transportation data from the **Bureau of Transportation Statistics (BTS)** to uncover insights into cross-border freight's efficiency, safety and environmental impacts across modes such as road, rail, air and water.
 
