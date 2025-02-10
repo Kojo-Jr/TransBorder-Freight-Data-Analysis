@@ -835,7 +835,7 @@ Analysis:
 
 The bar chart above illustrates the distribution of freight value (in trillions of USD) by transportation mode over the past four years across the top 10 US states. Each transportation mode is color-coded, allowing for easy differentiation.
 
-Notably, truck transportation overwhelmingly dominates the freight value. Texas is particularly prominent, with truck freight value exceeding 4.5 trillion USD, far surpassing the contributions of other states. California also shows significant activity, recording over 1 trillion USD in truck freight value. In contrast, other modes such as rail, air, and pipeline consistently contribute less, with freight values remaining below 1 trillion USD across these states.
+Notably, truck transportation overwhelmingly dominates the freight value. Texas is particularly prominent, with truck freight value exceeding 4.5 trillion USD, far surpassing the contributions of other states. California also shows significant activity, recording over 1 trillion USD in truck freight value. In contrast, other modes such as rail, air and pipeline consistently contribute less, with freight values remaining below 1 trillion USD across these states.
 
 These observations indicate that truck transport is the critical driver of freight value in the US, especially in key states like Texas and California, while the contribution of other modes is relatively modest.
 
@@ -953,7 +953,7 @@ Analysis from 2020:
 
 -   Freight Value vs. Shipment Weight (0.40): A moderate positive correlation indicates that higher shipment weight is associated with an increase in freight value, though the relationship is not strong.
 
--   Freight Value vs. Freight Charges (0.45): A moderate positive correlation suggests that higher freight value2021: is moderately associated with higher freight charges.
+-   Freight Value vs. Freight Charges (0.45): A moderate positive correlation suggests that higher freight value tend to be associated with higher freight charges.
 
 -   Shipment Weight vs. Freight Charges (0.86): A strong positive correlation implies that heavier shipments tend to incur higher freight charges.
 
@@ -971,7 +971,7 @@ Analysis from 2022:
 
 -   Freight Value vs. Freight Charges (0.64): The correlation strengthens, showing a notable association between freight value and charges.
 
--   Shipment Weight vs. Freight Charges (0.83): The strong positive correlation decreases slightly but remains substantial.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
+-   Shipment Weight vs. Freight Charges (0.83): The strong positive correlation decreases slightly but remains substantial.
 
 Analysis for 2023:
 
@@ -993,7 +993,7 @@ Overall Interpretation:
 
 1.  Shipment Weight and Freight Charges: Across all years, there is a consistently strong positive correlation (above 0.89), with the strongest in 2024 (0.91). This indicates that shipment weight is a critical determinant of freight charges.
 
-2.  Freight Value and Shipment Weight: The correlation is generally moderate, ranging from 0.40 in 2020 to a peak of 0.64 in 2022, and then slightly declining afterward. This suggests that heavier shipments tend to have higher values, but the relationship is not as strong or consistent as with freight charges.
+2.  Freight Value and Shipment Weight: The correlation is generally moderate, ranging from 0.40 in 2020 to a peak of 0.64 in 2022 and then slightly declining afterward. This suggests that heavier shipments tend to have higher values, but the relationship is not as strong or consistent as with freight charges.
 
 3.  Freight Value and Freight Charges: The correlation is moderate across all years, ranging from 0.45 to 0.64, indicating that while higher-value shipments often result in higher charges, other factors also contribute.
 
@@ -1083,7 +1083,7 @@ Based on the chart, the total trade value (combining both imports and exports) f
 
 In particular, Texas stands out with a high import value while also leading in exports, positioning it as a major hub for both inbound and outbound goods. In contrast, California's trade profile is characterized by a substantial import value that far exceeds its export figures.
 
-Moreover, states like Miami, Illinois, and Ohio exhibit trade activity that is almost exclusively import-oriented, with their total trade values remaining below 1 trillion dollars. These insights highlight the diverse trade dynamics across US states, providing a valuable perspective for policy makers and businesses aiming to enhance global trade competitiveness.
+Moreover, states like Miami, Illinois and Ohio exhibit trade activity that is almost exclusively import-oriented, with their total trade values remaining below 1 trillion dollars. These insights highlight the diverse trade dynamics across US states, providing a valuable perspective for policy makers and businesses aiming to enhance global trade competitiveness.
 
 Given the range of trade values from 0 to 2.5 trillion dollars, it's clear that there is a substantial variation in trade activities among these states. Factors such as geographic location, industry focus and infrastructure play significant roles in determining each state's trade value.
 
@@ -1159,3 +1159,5 @@ Effect Size: Because VALUE is measured in dollars, its coefficient (approximatel
 -   Alternative Hypothesis (H₁): Freight value affects trade type.
 
 Since the coefficient of the VALUE is highly statistically significant, p value \< a, the null hypothesis is rejected, which concludes that Freight value affects trade type.
+
+**Deployment**
