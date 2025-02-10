@@ -28,12 +28,20 @@ The objectives were defined below, followed by the formulation of analytic quest
 ### Analytic Questions:
 
 a.  What are the top modes of transportation by freight value?
-b.  Which US state contributes the most to freight weight?
-c.  What is the correlation between Freight Value, Shipment Weight and Freight Charges for each year from 2020 to 2024?
-d.  How has the total freight value changed over the years from 2020 to 2024?
-e.  How do import and export values compare across different states in the US?
-f.  \# Scatter plot with a linear model smoothing line ggplot(data, aes(x = SHIPWT, y = FREIGHT_CHARGES)) + geom_point(alpha = 0.5, color = "blue") + scale_x_log10() + \# Log-scale for shipment weight scale_y_log10() + \# Log-scale for freight charges geom_smooth(method = "lm", se = FALSE, color = "red") + labs( title = "Relationship Between Shipment Weight and Freight Charges", x = "Shipment Weight (log scale)", y = "Freight Charges (log scale)" ) + theme_minimal()
-g.  What are the top modes of transportation by freight value in the US states?
+
+b.  What are the top modes of transportation by freight value in the US states?
+
+c.  Which US state contributes the most to freight weight?
+
+d.  What is the correlation between Freight Value, Shipment Weight and Freight Charges for each year from 2020 to 2024?
+
+e.  How has the total freight value changed over the years from 2020 to 2024?
+
+f.  How do import and export values compare across different states in the US?
+
+g.  What is the variability in shipment weights for exports versus imports?
+
+    -   Do exports or imports show more consistency or is one category more prone to outliers?
 
 ## 2. Data Understanding
 
@@ -646,11 +654,11 @@ options(scipen = 999) # set to avoid scientific notation
 
 summary_statistics <- data %>%
   summarise(
-    Total_Value = sum(VALUE, na.rm = T),
-    Total_ShipWt = sum(SHIPWT, na.rm = T),
-    Total_Freight_Charges = sum(FREIGHT_CHARGES, na.rm = T),
-    Avg_Value = mean(VALUE, na.rm = T),
-    Avg_ShipWt = mean(SHIPWT, na.rm = T),
+    Total_Value = sum(VALUE),
+    Total_ShipWt = sum(SHIPWT),
+    Total_Freight_Charges = sum(FREIGHT_CHARGES),
+    Avg_Value = mean(VALUE),
+    Avg_ShipWt = mean(SHIPWT),
     Avg_Freight_Charges = mean(FREIGHT_CHARGES, na.rm = T)
   )
 
@@ -672,12 +680,12 @@ Total Freight Charges: The total freight charges across all transactions amount 
 yearly_statistics <- data %>% 
   group_by(YEAR) %>%
   summarise(
-    Total_Value = sum(VALUE, na.rm = T),
-    Total_ShipWt = sum(SHIPWT, na.rm = T),
-    Total_Freight_Charges = sum(FREIGHT_CHARGES, na.rm = T),
-    Avg_Value = mean(VALUE, na.rm = T),
-    Avg_ShipWt = mean(SHIPWT, na.rm = T),
-    Avg_Freight_Charges = mean(FREIGHT_CHARGES, na.rm = T)
+    Total_Value = sum(VALUE),
+    Total_ShipWt = sum(SHIPWT),
+    Total_Freight_Charges = sum(FREIGHT_CHARGES),
+    Avg_Value = mean(VALUE),
+    Avg_ShipWt = mean(SHIPWT),
+    Avg_Freight_Charges = mean(FREIGHT_CHARGES)
   ) %>%
   # round the numbers to  3 decimals
   mutate(
@@ -1067,3 +1075,23 @@ In particular, Texas stands out with a high import value while also leading in e
 Moreover, states like Miami, Illinois, and Ohio exhibit trade activity that is almost exclusively import-oriented, with their total trade values remaining below 1 trillion dollars. These insights highlight the diverse trade dynamics across US states, providing a valuable perspective for policy makers and businesses aiming to enhance global trade competitiveness.
 
 Given the range of trade values from 0 to 37 trillion dollars, it's clear that there is a substantial variation in trade activities among these states. Factors such as geographic location, industry focus and infrastructure play significant roles in determining each state's trade value.
+
+**What is the variability in shipment weights for exports versus imports?**
+
+Do exports or imports show more consistency, or is one category more prone to outliers?
+
+```{r}
+ggplot(data, aes(x = factor(TRDTYPE, labels = c("Export", "Import")), y = SHIPWT)) +
+  geom_boxplot(fill = "lightgreen") +
+  # scale_y_log10() +  # Use log scale if weights vary widely
+  labs(
+    title = "Shipment Weight Distribution by Trade Type",
+    x = "Trade Type",
+    y = "Shipment Weight"
+  ) +
+  theme_minimal()
+```
+
+The box plot comparing shipment weight for exports and imports reveals several key insights. First, the median shipment weight for imports is higher than that for exports, indicating that, on average, import shipments tend to be heavier. The export distribution, shown by a smaller box, suggests less variability and more consistency in shipment weight, whereas the import distribution is more spread out, pointing to greater variability among import shipments.
+
+Both trade types exhibit outliers, individual points that fall outside the whiskers with exports displaying a greater number of outliers than imports. Moreover, the distribution of import shipment weights is positively skewed, meaning the data has a longer tail towards the higher weights, while the export distribution appears more symmetric.
