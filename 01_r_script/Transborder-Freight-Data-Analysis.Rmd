@@ -752,7 +752,7 @@ The bar chart above shows the distribution of freight value (in millions of USD)
 
 Key Observations:
 
-Trucks dominate the freight value across most years, indicating their importance in domestic and regional transportation.
+Trucks and pipeline dominates the freight value across most years, indicating their importance in domestic and regional transportation.
 
 Air transportation, while less significant in terms of value, consistently contributes a notable portion of the freight value, highlighting its role in high-value shipments.
 
@@ -1053,7 +1053,7 @@ us_trade_top10 <- us_trade %>%
 # Visualise the trade values of import and export amongst the top 10 USA states
 ggplot(us_trade_top10, aes(x = USASTATE, y = Total_Value, fill = factor(TRDTYPE, labels = c("Export", "Import")))) +
   geom_bar(stat = "identity", position = "dodge") +
-  scale_y_continuous(labels = label_number(scale = 1e-12, suffix = "T")) +  # Convert to millions
+  scale_y_continuous(labels = label_number(scale = 1e-12, suffix = "T")) +  # Convert to trillions
   labs (
     title = "Trade Values for Top 10 US States Over The Past Four Years",
     x = "US State",
