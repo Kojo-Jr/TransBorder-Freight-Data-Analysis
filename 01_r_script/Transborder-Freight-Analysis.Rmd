@@ -1,5 +1,5 @@
 ---
-title: "Trans-borderFreight Data Analysis"
+title: "TransborderFreight Data Analysis"
 author: "Ebenezer Omari"
 output: html_notebook
 ---
@@ -1159,5 +1159,3 @@ Effect Size: Because VALUE is measured in dollars, its coefficient (approximatel
 -   Alternative Hypothesis (H₁): Freight value affects trade type.
 
 Since the coefficient of the VALUE is highly statistically significant, p value \< a, the null hypothesis is rejected, which concludes that Freight value affects trade type.
-
-**Deployment**
