@@ -758,9 +758,74 @@ Air transportation, while less significant in terms of value, consistently contr
 
 Pipelines and vessels also contribute significantly, particularly for specific years where bulk commodities like oil or goods with high shipping requirements were involved.
 
-**What is the trend of freight value over time?**
+**What are the top modes of transportation by freight value in the US states?**
 
 ```{r}
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(RColorBrewer)
+
+# First, summarize freight value by YEAR, USASTATE and DISAGMOT
+us_trade_mode <- yearly_data %>%
+  group_by(YEAR, USASTATE, DISAGMOT) %>%
+  summarise(Total_Value = sum(VALUE), .groups = "drop")
+
+# get overall total freight value by state
+us_state_totals <- yearly_data %>%
+  group_by(USASTATE) %>%
+  summarise(Overall_Value = sum(VALUE), .groups = "drop") %>%
+  arrange(desc(Overall_Value))
+
+# Select the top 10 states based on Overall_Value
+top_states <- us_state_totals %>%
+  slice_max(Overall_Value, n = 10) %>%
+  pull(USASTATE)
+
+# Filter the mode-level data to include only these top states
+us_trade_mode_top10 <- us_trade_mode %>%
+  filter(USASTATE %in% top_states)
+
+
+# Create a mapping for DISAGMOT codes to descriptive names
+mode_description <- c(
+  "1"  = "Vessel",
+  "3"  = "Air",
+  "4"  = "Mail (U.S. Post Service)",
+  "5"  = "Truck",
+  "6"  = "Rail",
+  "7"  = "Pipeline",
+  "8"  = "Other",
+  "9"  = "Foreign Trade Zones (FTZs)"
+)
+
+# Aggregate the filtered data across years for each state and mode
+us_trade_mode_top10_agg <- us_trade_mode_top10 %>%
+  group_by(USASTATE, DISAGMOT) %>%
+  summarise(Total_Value = sum(Total_Value), .groups = "drop")
+
+ggplot(us_trade_mode_top10_agg, aes(x = USASTATE, y = Total_Value / 1e6, fill = factor(DISAGMOT))) +
+  geom_bar(stat = "identity", position = "dodge") +
+ # scale_y_continuous(labels = label_number(scale = 1e-6, suffix = "M")) +  # Display values in millions
+  scale_fill_manual(
+    values = brewer.pal(8, "Set2"),
+    labels = mode_description,
+    name = "Transportation Mode"
+  ) +
+  labs(
+    title = "Top Modes of Transportation by Freight Value (Top 10 US States)",
+    x = "US State",
+    y = "Freight Value"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+Analysis:
+
+**What is the trend of freight value over time?**
+
+```{r warning=F}
 # Run the analysis for years
 years <- c(2020, 2021, 2022, 2023, 2024)
 
@@ -809,7 +874,7 @@ for(year in years) {
 
 Analysis from 2020:
 
--   High Point: Freight value peaks in **January**,likely due to increased shipment demand before global COVID-19 lock-downs.
+-   High Point: Freight value peaks in March,likely due to increased shipment demand before global COVID-19 lock-downs.
 
 -   Low Point: Freight value dips in April and May corresponding to the start of significant international shipping restrictions.
 
@@ -847,7 +912,7 @@ for(year in years) {
   # summarize the total freight (SHIPWT) by state 
   state_freight_summary <- yearly_data %>% 
     group_by(USASTATE) %>% 
-    summarise(Total_ShipWt = sum(SHIPWT, na.rm = T)) %>% 
+    summarise(Total_ShipWt = sum(SHIPWT)) %>% 
     arrange(desc(Total_ShipWt)) # sort by total freight
 
  # Limit to top 10 states for better readability
@@ -1007,7 +1072,7 @@ Key Insights:
 # Freight Value by Year
 yearly_trends <- data %>%
   group_by(YEAR) %>%
-  summarise(Total_Value = sum(VALUE, na.rm = TRUE))
+  summarise(Total_Value = sum(VALUE))
 
 ggplot(yearly_trends, aes(x = as.factor(YEAR), y = Total_Value / 1e6)) +
   geom_line(group = 1, color = "blue") +
@@ -1043,7 +1108,7 @@ options(scipen = 999) # Avoid scientific notation
 # Prepare the data for the US states
 us_trade <- data %>% 
   group_by(TRDTYPE, USASTATE) %>% 
-  summarise(Total_Value = sum(VALUE, na.rm = TRUE), .groups = "drop") %>% 
+  summarise(Total_Value = sum(VALUE), .groups = "drop") %>% 
   mutate(Country = "USA") 
 
 # Select the top 10 states based on Total_Value
@@ -1080,10 +1145,10 @@ Given the range of trade values from 0 to 2.5 trillion dollars, it's clear that 
 
 Do exports or imports show more consistency, or is one category more prone to outliers?
 
-```{r}
+```{r warning=FALSE}
 ggplot(data, aes(x = factor(TRDTYPE, labels = c("Export", "Import")), y = SHIPWT)) +
   geom_boxplot(fill = "lightgreen") +
-  # scale_y_log10() +  # Use log scale if weights vary widely
+  scale_y_log10() +  # Use log scale if weights vary widely
   labs(
     title = "Shipment Weight Distribution by Trade Type",
     x = "Trade Type",
