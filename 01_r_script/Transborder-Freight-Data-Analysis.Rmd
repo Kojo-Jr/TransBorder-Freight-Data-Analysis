@@ -645,7 +645,7 @@ unique(data$CONTCODE)
 
 ## 4. Analysis and Visualization
 
-```{r}
+```{r echo=FALSE}
 # summary statistics aggregated across the entire data set
 
 options(scipen = 999) # set to avoid scientific notation 
@@ -673,7 +673,7 @@ Total Shipment Weight: The total shipping weight of goods transported is 7.82 tr
 
 Total Freight Charges: The total freight charges across all transactions amount to 251.02 billion USD, showing the financial cost of transportation.
 
-```{r}
+```{r echo=FALSE}
 # Grouping data by YEAR and calculating yearly statistics
 yearly_statistics <- data %>% 
   group_by(YEAR) %>%
@@ -708,6 +708,8 @@ yearly_statistics <- data %>%
 print(yearly_statistics)
 ```
 
+The data set covered multiple years and regions, with data on road, rail, air sand water transport modes.
+
 This table shows the yearly statistics for the years 2020 to 2024, focusing on three metrics: Avg_Value, Avg_ShipWt (Average Shipping Weight) and Avg_Freight_Charges.
 
 In 2020, the average value of the goods was about 2.27 million dollars with an average shipping weight of 1.23 million kg. The average freight charges for shipping were 32.76 million.
@@ -722,7 +724,7 @@ Key Findings from the analytic questions:
 
 **What are the top modes of transportation by freight volume and value?**
 
-```{r}
+```{r echo=FALSE}
 # Data visualisation based on transportation mode (DISAGMOT)
 mode_description <- c(
   "1"  = "Vessel",
@@ -768,7 +770,7 @@ Pipelines and vessels also contribute significantly, particularly for specific y
 
 **What are the top modes of transportation by freight value in the US states?**
 
-```{r}
+```{r echo=FALSE}
 library(RColorBrewer)
 # Filter data for the desired years
 yearly_data <- data %>% 
@@ -839,7 +841,7 @@ These observations indicate that truck transport is the critical driver of freig
 
 **Which US state contributes the most to ship weight**
 
-```{r}
+```{r echo=FALSE}
 # List of years to process
 years <- c(2020, 2021, 2022, 2023, 2024)
 
@@ -884,7 +886,7 @@ The states with the highest freight weight include Texas followed by Illinois an
 
 **What is the correlation between Freight Value, Shipment Weight and Freight Charges for each year from 2020 to 2024?**
 
-```{r}
+```{r echo=FALSE}
 # Correlation Between Value, Weight, and Freight Charges
 # List of years to process
 years <- c(2020, 2021, 2022, 2023, 2024)
@@ -1005,7 +1007,7 @@ Key Insights:
 
 **How has the total freight value changed over the years from 2020 to 2024?**
 
-```{r}
+```{r echo=FALSE}
 # Yearly trend Analysis
 # Freight Value by Year
 yearly_trends <- data %>%
@@ -1046,7 +1048,7 @@ The decline in 2024 is noteworthy and may warrant further investigation to under
 
 **How do import and export values compare across different states in the US?**
 
-```{r}
+```{r echo=FALSE}
 options(scipen = 999) # Avoid scientific notation
 
 # Prepare the data for the US states
@@ -1089,7 +1091,7 @@ Given the range of trade values from 0 to 2.5 trillion dollars, it's clear that 
 
 Do exports or imports show more consistency, or is one category more prone to outliers?
 
-```{r warning=FALSE}
+```{r echo=FALSE, warning=FALSE}
 ggplot(data, aes(x = factor(TRDTYPE, labels = c("Export", "Import")), y = SHIPWT)) +
   geom_boxplot(fill = "lightgreen") +
   scale_y_log10() +  # Use log scale if weights vary widely
@@ -1117,7 +1119,7 @@ Independent variable (x): Freight value
 
 Significant level (a): 5% or 0.05
 
-```{r}
+```{r echo=FALSE}
 # Ensure TRDTYPE is a factor with appropriate labels
 data$TRDTYPE <- factor(data$TRDTYPE, levels = c("1", "2"))
 
@@ -1148,7 +1150,7 @@ Both coefficients are statistically significant (p values are essentially 0, i.e
 
 Significance of VALUE: The freight value is a statistically significant predictor of trade type. Despite the very small coefficient (due to the scale of VALUE), the extremely low p-value indicates that the relationship is highly unlikely to be due to random chance.
 
-Effect Size: Because VALUE is measured in dollars, its coefficient (approximately 4.15e-09 per dollar) might seem negligible at first glance. However, if changes are considered on a larger scale (e.g., per million dollars), the effect becomes more interpretable. For example, a one-million-dollar increase in freight value would increase the log-odds of the trade type by about 0.00415.
+Effect Size: Because VALUE is measured in dollars, its coefficient (approximately 4.15e-09 per dollar) might seem negligible at first glance. However, if changes are considered on a larger scale (e.g., per million dollars), the effect becomes more interpretable. For example, a one million dollar increase in freight value would increase the log-odds of the trade type by about 0.00415.
 
 **Conclusion:**
 
