@@ -4,8 +4,6 @@ author: "Ebenezer Omari"
 output: html_output
 ---
 
-# Trans-border Freight Data Analysis
-
 This project analyses transportation data from the **Bureau of Transportation Statistics (BTS)** to uncover insights into cross-border freight's efficiency, safety and environmental impacts across modes such as road, rail, air and water.
 
 ## CRISP-DM Framework
@@ -680,27 +678,27 @@ Total Freight Charges: The total freight charges across all transactions amount 
 yearly_statistics <- data %>% 
   group_by(YEAR) %>%
   summarise(
-    Total_Value = sum(VALUE),
-    Total_ShipWt = sum(SHIPWT),
-    Total_Freight_Charges = sum(FREIGHT_CHARGES),
+    #Total_Value = sum(VALUE),
+    #Total_ShipWt = sum(SHIPWT),
+    #Total_Freight_Charges = sum(FREIGHT_CHARGES),
     Avg_Value = mean(VALUE),
     Avg_ShipWt = mean(SHIPWT),
     Avg_Freight_Charges = mean(FREIGHT_CHARGES)
   ) %>%
   # round the numbers to  3 decimals
   mutate(
-    Total_Value = round(Total_Value /1e9, 3), # convert to billions and round
-    Total_ShipWt = round(Total_ShipWt /1e9, 3), # convert to billions and round
-    Total_Freight_Charges = round(Total_Freight_Charges /1e6), # convert to millions and round
+    #Total_Value = round(Total_Value /1e9, 3), # convert to billions and round
+    #Total_ShipWt = round(Total_ShipWt /1e9, 3), # convert to billions and round
+    #Total_Freight_Charges = round(Total_Freight_Charges /1e6), # convert to millions and round
     Avg_Value = round(Avg_Value, 3),
     Avg_ShipWt = round(Avg_ShipWt, 3),
     Avg_Freight_Charges = round(Avg_Freight_Charges, 3)
   ) %>% 
   # Add units for clarity
   mutate(
-    Total_Value = paste(Total_Value, "B", sep = ""),
-    Total_ShipWt = paste(Total_ShipWt, "B", sep = ""),
-    Total_Freight_Charges = paste(Total_Freight_Charges, "M", sep = ""),
+    #Total_Value = paste(Total_Value, "B", sep = ""),
+    #Total_ShipWt = paste(Total_ShipWt, "B", sep = ""),
+    #Total_Freight_Charges = paste(Total_Freight_Charges, "M", sep = ""),
     Avg_Value = paste(Avg_Value, "M", sep = ""),
     Avg_ShipWt = paste(Avg_ShipWt, "kg", sep = ""),
     Avg_Freight_Charges = paste(Avg_Freight_Charges, "M", sep = "")
@@ -709,6 +707,16 @@ yearly_statistics <- data %>%
 # print yearly statistics
 print(yearly_statistics)
 ```
+
+This table shows the yearly statistics for the years 2020 to 2024, focusing on three metrics: Avg_Value, Avg_ShipWt (Average Shipping Weight) and Avg_Freight_Charges.
+
+In 2020, the average value of the goods was about 2.27 million dollars with an average shipping weight of 1.23 million kg. The average freight charges for shipping were 32.76 million.
+
+In 2021, the average value of the goods increased to 2.76 million dollars, while the average shipping weight was almost the same at 1.22 million kg. Freight charges also rose to 36.55 million.
+
+In 2022, the average value reached its peak at 3.20 million dollars, but the shipping weight slightly decreased to 1.21 million kg. Freight charges continued to increase to 42.52 million.
+
+In 2023, the average value dropped slightly to 3.18 million, with a further decrease in shipping weight to 1.20 million kg. The average freight charges went down slightly to 40.98 million.
 
 Key Findings from the analytic questions:
 
@@ -761,20 +769,20 @@ Pipelines and vessels also contribute significantly, particularly for specific y
 **What are the top modes of transportation by freight value in the US states?**
 
 ```{r}
-library(dplyr)
-library(ggplot2)
-library(scales)
-library(RColorBrewer)
 
-# First, summarize freight value by YEAR, USASTATE and DISAGMOT
+# Filter data for the desired years
+yearly_data <- data %>% 
+  filter(YEAR %in% c(2020, 2021, 2022, 2023, 2024))
+  
+# Summarize freight value by YEAR, USASTATE, and DISAGMOT
 us_trade_mode <- yearly_data %>%
   group_by(YEAR, USASTATE, DISAGMOT) %>%
-  summarise(Total_Value = sum(VALUE), .groups = "drop")
+  summarise(Total_Value = sum(VALUE, na.rm = TRUE), .groups = "drop")
 
-# get overall total freight value by state
+# Get overall total freight value by state
 us_state_totals <- yearly_data %>%
   group_by(USASTATE) %>%
-  summarise(Overall_Value = sum(VALUE), .groups = "drop") %>%
+  summarise(Overall_Value = sum(VALUE, na.rm = TRUE), .groups = "drop") %>%
   arrange(desc(Overall_Value))
 
 # Select the top 10 states based on Overall_Value
@@ -786,6 +794,10 @@ top_states <- us_state_totals %>%
 us_trade_mode_top10 <- us_trade_mode %>%
   filter(USASTATE %in% top_states)
 
+# Aggregate the filtered data across years for each state and mode
+us_trade_mode_top10_agg <- us_trade_mode_top10 %>%
+  group_by(USASTATE, DISAGMOT) %>%
+  summarise(Total_Value = sum(Total_Value, na.rm = TRUE), .groups = "drop")
 
 # Create a mapping for DISAGMOT codes to descriptive names
 mode_description <- c(
@@ -799,14 +811,10 @@ mode_description <- c(
   "9"  = "Foreign Trade Zones (FTZs)"
 )
 
-# Aggregate the filtered data across years for each state and mode
-us_trade_mode_top10_agg <- us_trade_mode_top10 %>%
-  group_by(USASTATE, DISAGMOT) %>%
-  summarise(Total_Value = sum(Total_Value), .groups = "drop")
-
-ggplot(us_trade_mode_top10_agg, aes(x = USASTATE, y = Total_Value / 1e6, fill = factor(DISAGMOT))) +
+# Plot the data with freight values in trillions of dollars
+ggplot(us_trade_mode_top10_agg, aes(x = USASTATE, y = Total_Value / 1e12, fill = factor(DISAGMOT))) +
   geom_bar(stat = "identity", position = "dodge") +
- # scale_y_continuous(labels = label_number(scale = 1e-6, suffix = "M")) +  # Display values in millions
+  scale_y_continuous(labels = label_number(scale = 1, suffix = "T")) +  # Display values in trillions
   scale_fill_manual(
     values = brewer.pal(8, "Set2"),
     labels = mode_description,
@@ -815,7 +823,7 @@ ggplot(us_trade_mode_top10_agg, aes(x = USASTATE, y = Total_Value / 1e6, fill = 
   labs(
     title = "Top Modes of Transportation by Freight Value (Top 10 US States)",
     x = "US State",
-    y = "Freight Value"
+    y = "Freight Value (Trillions of Dollars)"
   ) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
@@ -823,88 +831,14 @@ ggplot(us_trade_mode_top10_agg, aes(x = USASTATE, y = Total_Value / 1e6, fill = 
 
 Analysis:
 
-**What is the trend of freight value over time?**
-
-```{r warning=F}
-# Run the analysis for years
-years <- c(2020, 2021, 2022, 2023, 2024)
-
-analyse_yearly_data <- function(data, year) {
-  # filter data for the given year and aggregate by month
-  monthly_summary <- data %>% 
-    filter(YEAR == year) %>% 
-    group_by(MONTH) %>% 
-    summarise(Total_Value = sum(VALUE, na.rm = T)) %>% 
-    mutate(
-      Monthly_label = factor(MONTH, levels = 1:12, labels = month.name)
-    ) %>% 
-    arrange(MONTH)
-  
-  # print monthly summary
-  monthly_summary
-  
-  # plot the data 
-  ggplot(monthly_summary, aes(
-    x = Monthly_label, y = Total_Value
-  )) + 
-    geom_line(color = "blue", linewidth = 1.2) +
-    geom_point(color = "red", size = 3) +
-    scale_y_continuous(
-      # round the y axis to millions
-      labels = scales::label_number(scale = 1e-6, suffix = "M", accuracy = 0.01)
-    ) +
-    labs(
-      title = paste("Monthly Freight Value in", year),
-      x = "Month",
-      y = "Total Freight Value (USD)"
-    ) +
-    theme_minimal() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
-  
-}
-
-# using the for loop 
-for(year in years) {
-  print(paste("Processing data for year:", year))
-  print(analyse_yearly_data(data, year))
-}
-
-
-```
-
-Analysis from 2020:
-
--   High Point: Freight value peaks in March,likely due to increased shipment demand before global COVID-19 lock-downs.
-
--   Low Point: Freight value dips in April and May corresponding to the start of significant international shipping restrictions.
-
-Analysis from 2021:
-
--   High Point:
-
--   Low Point:
-
-Analysis from 2022:
-
--   High Point:
-
--   Low Point:
-
-Analysis from 2023:
-
--   High Point:
-
--   Low Point:
-
-Analysis from 2024:
-
--   High Point:
-
--   Low Point:
+The bar chart above shows the distribution of freight value (in millions of USD) by transportation mode for the past 4 years in the US states. Each mode is represented by a distinct colour:
 
 **Which US states contributes the most to ship weight**
 
 ```{r}
+# List of years to process
+years <- c(2020, 2021, 2022, 2023, 2024)
+
 for(year in years) {
   # filter data for the current year
   yearly_data <- data %>%  filter(YEAR == year)
@@ -1160,3 +1094,56 @@ ggplot(data, aes(x = factor(TRDTYPE, labels = c("Export", "Import")), y = SHIPWT
 The box plot comparing shipment weight for exports and imports reveals several key insights. First, the median shipment weight for imports is higher than that for exports, indicating that, on average, import shipments tend to be heavier. The export distribution, shown by a smaller box, suggests less variability and more consistency in shipment weight, whereas the import distribution is more spread out, pointing to greater variability among import shipments.
 
 Both trade types exhibit outliers, individual points that fall outside the whiskers with exports displaying a greater number of outliers than imports. Moreover, the distribution of import shipment weights is positively skewed, meaning the data has a longer tail towards the higher weights, while the export distribution appears more symmetric.
+
+## **Confirmatory Data Analysis**
+
+H₀ (null): Freight Value has no effect on trade type
+
+H₁ (alternative): Freight Value affects Trade Type
+
+Dependent variable (y): Trade type
+
+Independent variable (x): Freight value
+
+Significant level (a): 5% or 0.05
+
+```{r}
+# Ensure TRDTYPE is a factor with appropriate labels
+data$TRDTYPE <- factor(data$TRDTYPE, levels = c("1", "2"))
+
+# Fit a logistic regression model
+log_model <- glm(TRDTYPE ~ VALUE, data = data, family = binomial)
+
+#summarize the model
+summary(log_model)
+```
+
+**Analysis:**
+
+**Coefficients**
+
+Intercept:
+
+-   Estimate: -0.069606
+
+VALUE:
+
+-   Estimate: 0.00000000414899 (4.15e-09)
+
+**Statistical significance:**
+
+Both coefficients are statistically significant (p values are essentially 0, i.e., \<2e-)
+
+**Interpretation:**
+
+Significance of VALUE: The freight value is a statistically significant predictor of trade type. Despite the very small coefficient (due to the scale of VALUE), the extremely low p-value indicates that the relationship is highly unlikely to be due to random chance.
+
+Effect Size: Because VALUE is measured in dollars, its coefficient (approximately 4.15e-09 per dollar) might seem negligible at first glance. However, if changes are considered on a larger scale (e.g., per million dollars), the effect becomes more interpretable. For example, a one-million-dollar increase in freight value would increase the log-odds of the trade type by about 0.00415.
+
+**Conclusion:**
+
+-   Null Hypothesis (H₀): Freight value has no effect on trade type.
+
+-   Alternative Hypothesis (H₁): Freight value affects trade type.
+
+Since the coefficient of the VALUE is highly statistically significant, p value \< a, the null hypothesis is rejected, which concludes that Freight value affects trade type.
