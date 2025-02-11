@@ -2,8 +2,9 @@
 title: "TransborderFreight Data Analysis"
 author: "Ebenezer Omari"
 output:
-  pdf_document: default
   html_notebook: default
+  word_document: default
+  pdf_document: default
 ---
 
 This project analyses transportation data from the **Bureau of Transportation Statistics (BTS)** to uncover insights into cross-border freight's efficiency, safety and environmental impacts across modes such as road, rail, air and water.
@@ -63,7 +64,7 @@ g\. YEAR
 
 ## 3. Data Preparation
 
-```{r}
+```{r eval=FALSE, include=FALSE}
 # load libraries 
 library(janitor)
 library(dplyr)
@@ -72,7 +73,7 @@ library(scales)
 library(reshape2)
 ```
 
-```{r}
+```{r eval=FALSE, include=FALSE}
 # data cleaning
 
 # 2020
@@ -620,7 +621,7 @@ data$USASTATE[is.na(data$USASTATE)] <- depe_mapping[data$DEPE[is.na(data$USASTAT
 
 ```
 
-```{r}
+```{r eval=FALSE, include=FALSE}
 # Check if all NA values are replaced
 sum(is.na(data$USASTATE))
 
@@ -675,7 +676,7 @@ Total Shipment Weight: The total shipping weight of goods transported is 7.82 tr
 
 Total Freight Charges: The total freight charges across all transactions amount to 251.02 billion USD, showing the financial cost of transportation.
 
-```{r echo=FALSE}
+```{r eval=FALSE, include=FALSE}
 # Grouping data by YEAR and calculating yearly statistics
 yearly_statistics <- data %>% 
   group_by(YEAR) %>%
@@ -711,8 +712,6 @@ print(yearly_statistics)
 ```
 
 The data set covered multiple years and regions, with data on road, rail, air sand water transport modes.
-
-This table shows the yearly statistics for the years 2020 to 2024, focusing on three metrics: Avg_Value, Avg_ShipWt (Average Shipping Weight) and Avg_Freight_Charges.
 
 In 2020, the average value of the goods was about 2.27 million dollars with an average shipping weight of 1.23 million kg. The average freight charges for shipping were 32.76 million.
 

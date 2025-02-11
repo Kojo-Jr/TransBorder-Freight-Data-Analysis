@@ -665,14 +665,6 @@ format(summary_statistics, scientific = F, big.mark = ",")
 print(summary_statistics)
 ```
 
-The data set covered multiple years and regions, with data on road, rail, air sand water transport modes. Summary statistics across the data set (2020 – 2024) revealed:
-
-Total Value: The cumulative value of all freight transactions across the data set is 19.20 trillion USD. This metric highlights the enormous scale of trans-border freight in terms of monetary value.
-
-Total Shipment Weight: The total shipping weight of goods transported is 7.82 trillion kg. This gave an idea of the physical scale of goods being moved.
-
-Total Freight Charges: The total freight charges across all transactions amount to 251.02 billion USD, showing the financial cost of transportation.
-
 ```{r echo=FALSE}
 # Grouping data by YEAR and calculating yearly statistics
 yearly_statistics <- data %>% 
@@ -1159,5 +1151,3 @@ Effect Size: Because VALUE is measured in dollars, its coefficient (approximatel
 -   Alternative Hypothesis (H₁): Freight value affects trade type.
 
 Since the coefficient of the VALUE is highly statistically significant, p value \< a, the null hypothesis is rejected, which concludes that Freight value affects trade type.
-
-**Deployment**
