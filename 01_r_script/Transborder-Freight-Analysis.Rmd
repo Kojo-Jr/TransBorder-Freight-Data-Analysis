@@ -690,21 +690,20 @@ data$CANPROV[can_mask] <- getmode(data$CANPROV)
 ```
 
 ```{r}
-# Since they are still missing NA's use column-specific conditions or individual imputation conditions. This means that each column is evaluated independently for missing values, rather than requiring a combined condition (i.e. both columns missing) for imputation.
-# In this code: For MEXSTATE, the condition checks if MEXSTATE is NA and COUNTRY equals 2010. For CANPROV, the condition checks if CANPROV is NA and COUNTRY equals 1220.
+# Since they are still missing NA's  this code uses column-specific conditions or individual imputation conditions. This means that each column is evaluated independently for missing values, rather than requiring a combined condition (i.e. both columns missing) for imputation.
 
 # Define a function to calculate the mode (most frequent value)
 getmode <- function(v) {
-  uniqv <- unique(na.omit(v))
-  uniqv[which.max(tabulate(match(v, uniqv)))]
+  uniq_v <- unique(na.omit(v))
+  uniq_v[which.max(tabulate(match(v, uniq_v)))]
 }
 
-# For MEXSTATE: Fill NA values where COUNTRY equals 2010
-mex_mask <- is.na(data$MEXSTATE) & (data$COUNTRY == 2010)
+# For MEXSTATE: Fill all NA values
+mex_mask <- is.na(data$MEXSTATE)
 data$MEXSTATE[mex_mask] <- getmode(data$MEXSTATE)
 
-# For CANPROV: Fill NA values where COUNTRY equals 1220
-can_mask <- is.na(data$CANPROV) & (data$COUNTRY == 1220)
+# For CANPROV: Fill all NA values
+can_mask <- is.na(data$CANPROV)
 data$CANPROV[can_mask] <- getmode(data$CANPROV)
 ```
 
