@@ -643,6 +643,49 @@ unique(data$CONTCODE)
 
 ```
 
+```{r}
+# condition mismatch
+# The code only fills missing values for rows that meet the specific conditions:
+# For MEXSTATE, it fills NA's only when both MEXSTATE and CANPROV are missing and COUNTRY equals 2010. For CANPROV, it fills NA's only when both are missing and COUNTRY equals 1220. Check whether the remaining NA's have different COUNTRY values or if only one of the two columns is missing. If so, they won’t be matched by your masks.
+
+# Define a function to calculate the mode (most frequent value)
+getmode <- function(v) {
+  uniqv <- unique(na.omit(v))
+  uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+# Create a mask for rows where MEXSTATE and CANPROV are NA and COUNTRY equals 2010
+mex_mask <- is.na(data$MEXSTATE) & is.na(data$CANPROV) & (data$COUNTRY == 2010)
+
+# Fill missing MEXSTATE values (for those rows) with the mode of the MEXSTATE column
+data$MEXSTATE[mex_mask] <- getmode(data$MEXSTATE)
+
+# Create a mask for rows where MEXSTATE and CANPROV are NA and COUNTRY equals 1220
+can_mask <- is.na(data$MEXSTATE) & is.na(data$CANPROV) & (data$COUNTRY == 1220)
+
+# Fill missing CANPROV values (for those rows) with the mode of the CANPROV column
+data$CANPROV[can_mask] <- getmode(data$CANPROV)
+
+```
+
+```{r}
+# This code is using column-specific conditions or individual imputation conditions. This means that each column is evaluated independently for missing values, rather than requiring a combined condition (i.e. both columns missing) for imputation.
+
+# Define a function to calculate the mode (most frequent value)
+getmode <- function(v) {
+  uniq_v <- unique(na.omit(v))
+  uniq_v[which.max(tabulate(match(v, uniq_v)))]
+}
+
+# For MEXSTATE: Fill NA values where COUNTRY equals 2010
+mex_mask <- is.na(data$MEXSTATE) & (data$COUNTRY == 2010)
+data$MEXSTATE[mex_mask] <- getmode(data$MEXSTATE)
+
+# For CANPROV: Fill NA values where COUNTRY equals 1220
+can_mask <- is.na(data$CANPROV) & (data$COUNTRY == 1220)
+data$CANPROV[can_mask] <- getmode(data$CANPROV)
+```
+
 ## 4. Analysis and Visualization
 
 ```{r echo=FALSE}

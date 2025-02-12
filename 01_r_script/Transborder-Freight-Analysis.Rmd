@@ -621,6 +621,26 @@ data$USASTATE[is.na(data$USASTATE)] <- depe_mapping[data$DEPE[is.na(data$USASTAT
 
 ```
 
+```{r}
+# Fill the NA's in the DEPE column
+# Define a function to calculate the mode (most frequent value)
+getmode <- function(v) {
+  uniq_v_depe <- unique(na.omit(v))
+  uniq_v_depe[which.max(tabulate(match(v, uniq_v_depe)))]
+}
+
+# Calculate the most frequent DEPE for each USASTATE
+mode_depe_by_state <- data %>%
+  group_by(USASTATE) %>%
+  summarise(mode_DEPE = getmode(DEPE), .groups = "drop")
+
+# Fill in missing DEPE values based on the mode for the respective USASTATE
+data <- data %>%
+  left_join(mode_depe_by_state, by = "USASTATE") %>%
+  mutate(DEPE = if_else(is.na(DEPE), mode_DEPE, DEPE)) %>%
+  select(-mode_DEPE)
+```
+
 ```{r eval=FALSE, include=FALSE}
 # Check if all NA values are replaced
 sum(is.na(data$USASTATE))
@@ -644,6 +664,29 @@ data <- data %>%
 unique(data$CONTCODE)
 
 
+```
+
+```{r}
+# Condition Mismatch:
+# The code only fills missing values for rows that meet the specific conditions: For MEXSTATE, it fills NA's only when both MEXSTATE and CANPROV are missing and COUNTRY equals 2010. For CANPROV, it fills NA's only when both are missing and COUNTRY equals 1220. Check whether the remaining NA's have different COUNTRY values or if only one of the two columns is missing. If so, they won’t be matched by your masks.
+
+# Define a function to calculate the mode (most frequent value)
+getmode <- function(v) {
+  uniqv <- unique(na.omit(v))
+  uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+# Create a mask for rows where MEXSTATE and CANPROV are NA and COUNTRY equals 2010
+mex_mask <- is.na(data$MEXSTATE) & is.na(data$CANPROV) & (data$COUNTRY == 2010)
+
+# Fill missing MEXSTATE values (for those rows) with the mode of the MEXSTATE column
+data$MEXSTATE[mex_mask] <- getmode(data$MEXSTATE)
+
+# Create a mask for rows where MEXSTATE and CANPROV are NA and COUNTRY equals 1220
+can_mask <- is.na(data$MEXSTATE) & is.na(data$CANPROV) & (data$COUNTRY == 1220)
+
+# Fill missing CANPROV values (for those rows) with the mode of the CANPROV column
+data$CANPROV[can_mask] <- getmode(data$CANPROV)
 ```
 
 ## 4. Analysis and Visualization
