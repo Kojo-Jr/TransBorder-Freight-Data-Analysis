@@ -614,11 +614,6 @@ depe_mapping <- c(
 
 # Replace NA values in USASTATE based on DEPE mapping
 data$USASTATE[is.na(data$USASTATE)] <- depe_mapping[data$DEPE[is.na(data$USASTATE)]]
-
-
-
-
-
 ```
 
 ```{r}
@@ -662,8 +657,6 @@ data <- data %>%
 
 # Check the result
 unique(data$CONTCODE)
-
-
 ```
 
 ```{r}
@@ -801,13 +794,14 @@ mode_description <- c(
 
 # plotting the freight value by mode across the years
 transportation_mode <- ggplot(data, aes(
-  x = YEAR, y = VALUE / 1e6,
+  x = YEAR, y = VALUE / 1e9,
   fill = factor(DISAGMOT)
 )) + geom_bar(stat = "identity", position = "dodge") +
+   scale_y_continuous(labels = label_number(scale = 1, suffix = "bn")) +  # Display values in trillions
   labs(
     title = "Top Modes of Transportation by Freight Value",
     x = "Year",
-    y = "Value (in millions)"
+    y = "Value (in billions)"
   ) + 
   theme_minimal() +
   scale_fill_manual(
@@ -895,7 +889,7 @@ ggplot(us_trade_mode_top10_agg, aes(x = USASTATE, y = Total_Value / 1e12, fill =
 
 Analysis:
 
-The bar chart above illustrates the distribution of freight value (in trillions of USD) by transportation mode over the past four years across the top 10 US states. Each transportation mode is color-coded, allowing for easy differentiation.
+The bar chart above illustrates the distribution of freight value (in trillions of USD) by transportation mode over the past four years across the top 10 US states. Each transportation mode is colour-coded, allowing for easy differentiation.
 
 Notably, truck transportation overwhelmingly dominates the freight value. Texas is particularly prominent, with truck freight value exceeding 4.5 trillion USD, far surpassing the contributions of other states. California also shows significant activity, recording over 1 trillion USD in truck freight value. In contrast, other modes such as rail, air and pipeline consistently contribute less, with freight values remaining below 1 trillion USD across these states.
 
@@ -904,37 +898,40 @@ These observations indicate that truck transport is the critical driver of freig
 **Which US state contributes the most to ship weight**
 
 ```{r echo=FALSE}
+options(scipen = 999) # Avoid scientific notation
+
 # List of years to process
 years <- c(2020, 2021, 2022, 2023, 2024)
 
 for(year in years) {
-  # filter data for the current year
-  yearly_data <- data %>%  filter(YEAR == year)
+  # Filter data for the current year
+  yearly_data <- data %>% filter(YEAR == year)
   
-  # summarize the total freight (SHIPWT) by state 
+  # Summarise the total freight weight by state 
   state_freight_summary <- yearly_data %>% 
     group_by(USASTATE) %>% 
-    summarise(Total_ShipWt = sum(SHIPWT)) %>% 
-    arrange(desc(Total_ShipWt)) # sort by total freight
-
- # Limit to top 10 states for better readability
-  state_freight_summary <- head(state_freight_summary, 10) %>% 
-  filter(!is.na(USASTATE) & USASTATE != "")
-
-# Create a bar plot of the freight weight by US state for the current year
+    summarise(Total_ShipWt = sum(SHIPWT, na.rm = TRUE)) %>% 
+    arrange(desc(Total_ShipWt)) %>%
+    filter(!is.na(USASTATE) & USASTATE != "")
+  
+  # Limit to top 10 states for better readability
+  state_freight_summary <- head(state_freight_summary, 10)
+  
+  # Create a bar plot of the freight weight by US state for the current year
   plot <- ggplot(state_freight_summary, aes(x = reorder(USASTATE, Total_ShipWt), y = Total_ShipWt / 1e3)) +
-    geom_col(fill = "steelblue") +   # Bar color
+    geom_col(fill = "steelblue") +   # Bar colour
     coord_flip() +                   # Flip the bars horizontally
+    scale_y_continuous(labels = label_comma()) +  # Format the numeric axis (now horizontal) with commas
     labs(
       title = paste("Total Ship Weight by US State (", year, ")", sep = ""),
       x = "State",
-      y = "Weight (in thousands of kilograms)"
+      y = "Weight (kilograms)"
     ) +
     theme_minimal() +                # Simple clean theme
     theme(
-      axis.text.x = element_text(size = 10),  # Adjust text size for better legibility
+      axis.text.x = element_text(size = 10),  # Adjust x-axis text size
       axis.text.y = element_text(size = 10),  # Adjust y-axis text size
-      plot.margin = margin(10, 50, 10, 10)    # Increase the space around the plot to avoid cutting off labels
+      plot.margin = margin(10, 50, 10, 10)    # Increase plot margins
     )
   
   # Print the plot for the current year
@@ -1076,12 +1073,13 @@ yearly_trends <- data %>%
   group_by(YEAR) %>%
   summarise(Total_Value = sum(VALUE))
 
-ggplot(yearly_trends, aes(x = as.factor(YEAR), y = Total_Value / 1e6)) +
+ggplot(yearly_trends, aes(x = as.factor(YEAR), y = Total_Value / 1e12)) +
   geom_line(group = 1, color = "blue") +
+  scale_y_continuous(labels = label_number(scale = 1, suffix = "T")) +  # Display values in trillions
   labs(
     title = "Yearly Freight Value Trends",
     x = "Year",
-    y = "Value (in millions)"
+    y = "Value (in trillions)"
   ) +
   theme_minimal()
 ```
@@ -1092,7 +1090,7 @@ From the data:
 
 -   The freight value increased steadily from 2020 to 2022.
 
--   The notable jump in 2021 and 2022 could reflect a post-2020 recovery in global trade, potentially spurred by the easing of pandemic restrictions,
+-   The notable jump in 2021 and 2022 could reflect a post-2020 recovery in global trade, potentially spurred by the easing of pandemic restrictions.
 
 -   The freight value remained very similar between 2022 and 2023, indicating that the growth peaked around 2022–2023, with 2023 having the highest freight value.
 
@@ -1221,3 +1219,31 @@ Effect Size: Because VALUE is measured in dollars, its coefficient (approximatel
 -   Alternative Hypothesis (H₁): Freight value affects trade type.
 
 Since the coefficient of the VALUE is highly statistically significant, p value \< a, the null hypothesis is rejected, which concludes that Freight value affects trade type.
+
+## 5. Insights and Conclusions:
+
+The analysis of the transborder freight data from 2020 to 2024 reveals several important trends and insights. Freight value increased steadily from 2020 to 2023, with particularly significant jumps in 2021 and 2022, suggesting a robust post-pandemic recovery and growth in freight activities. However, 2024 witnessed a decline, indicating a possible market correction or changing trade dynamics.
+
+In terms of transportation modes, truck transport emerged as the dominant contributor to freight value, especially in key states such as Texas and California. Other modes such as rail, air and pipeline contributed significantly less, which underscores the reliance on road transport in the current freight ecosystem.
+
+Furthermore, the correlation analysis demonstrated a strong, consistent relationship between shipment weight and freight charges, reinforcing that heavier shipments incur higher costs.
+
+The imputation of missing values, which was carefully addressed by mapping related columns rather than using a one-size-fits-all method, preserved the integrity of our data and provided more reliable insights.
+
+## Recommendations :
+
+Based on these findings, the following recommendations are proposed:
+
+-   Given the dominance of truck transport in freight value, it is advisable to enhance and modernise the trucking infrastructure, particularly in states with high freight activity such as Texas and California.
+
+-   The marked growth in freight value from 2020 to 2023 followed by a decline in 2024 suggests that continuous monitoring is essential. Stakeholders should implement regular reviews of freight performance metrics to anticipate market shifts and respond promptly.
+
+-   With a strong correlation between shipment weight and freight charges, there is scope to improve operational efficiency. Strategies to optimise shipment consolidation and routing may help reduce costs.
+
+-   The experience with missing values underscores the importance of understanding the context and source of incomplete data. Future data collection processes should aim to minimise missing entries, while ongoing data analysis should continue to use informed, context-specific imputation methods to reduce bias.
+
+## 6. Deployment
+
+Insights and visualizations were shared via:
+
+-   GitHub Repository: Includes documentation, R script and data files.
