@@ -1,9 +1,6 @@
 
-
-
-
-# This script contains the same code as the R Notebook (Freight Data Analysis.Rmd)
-# For detailed explanations and analysis, refer to Freight Data analysis.Rmd
+# This script contains the same code as the R Notebook (Transborder Freight Data Analysis.Rmd)
+# For detailed explanations and analysis, refer to Transborder Freight Data analysis.Rmd
 
 
 # load libraries 
