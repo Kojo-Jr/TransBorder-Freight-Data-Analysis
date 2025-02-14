@@ -20,7 +20,7 @@ The objectives were defined below, followed by the formulation of analytic quest
 -   **Operational Efficiency**: Detect inefficiencies and propose resource optimization strategies.
 -   **Environmental Impact**: Assess emissions and fuel usage, recommending sustainability improvements.
 -   **Safety Analysis**: Evaluate incidents and suggest safety protocol enhancements.
--   **Economic Effects**: Analyze the impact of trade patterns, policies and global disruptions.
+-   **Economic Effects**: Analyse the impact of trade patterns, policies and global disruptions.
 -   **Data-Driven Solutions**: Provide actionable recommendations for improving freight systems.
 
 ### Analytic Questions:
