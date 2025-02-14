@@ -895,6 +895,16 @@ Notably, truck transportation overwhelmingly dominates the freight value. Texas 
 
 These observations indicate that truck transport is the critical driver of freight value in the US, especially in key states like Texas and California, while the contribution of other modes is relatively modest.
 
+This dominance suggests that the environmental impact of freight transportation is largely driven by truck-related emissions and fuel usage. Trucks generally have higher greenhouse gas emissions and lower fuel efficiency compared to modes such as rail or pipeline.
+
+**Environmental Impact Assessment:**
+
+-   **Emissions & Fuel Usage:**\
+    Trucking typically relies on diesel, which emits significant levels of CO₂, NOₓ, and particulate matter. Given that truck freight value far exceeds that of other modes (with Texas exceeding 4.5 trillion USD and California over 1 trillion USD), it implies high fuel consumption and, consequently, a larger carbon footprint.
+
+-   **Sustainability Considerations:**\
+    Other modes, such as rail, air and pipeline, contribute much less to freight value (often below 1 trillion USD), and these modes generally offer more efficient, lower-emission alternatives for bulk commodities. The heavy reliance on truck transport therefore suggests that there is considerable scope for sustainability improvements.
+
 **Which US state contributes the most to ship weight**
 
 ```{r echo=FALSE}
@@ -1234,7 +1244,11 @@ The imputation of missing values, which was carefully addressed by mapping relat
 
 Based on these findings, the following recommendations are proposed:
 
--   Given the dominance of truck transport in freight value, it is advisable to enhance and modernise the trucking infrastructure, particularly in states with high freight activity such as Texas and California.
+-   Given the dominance of truck transport in freight value, it is advisable to enhance and modernise the trucking infrastructure, particularly in states with high freight activity such as Texas and California. Invest in cleaner technologies for truck fleets, including electric, hybrid, or alternative-fuel vehicles, to reduce per-vehicle emissions.
+
+-   Recommendations for reducing carbon foot printing includes: Encourage a shift from truck to more sustainable modes such as rail and pipeline, especially for long-haul and bulk commodity shipments. Introduce incentives, such as tax credits or subsidies, for companies that adopt low-carbon technologies and practices in freight transport. Collect and analyse detailed data on emissions, fuel usage, and other sustainability metrics to monitor progress and identify further opportunities for improvement.
+
+<!-- -->
 
 -   The marked growth in freight value from 2020 to 2023 followed by a decline in 2024 suggests that continuous monitoring is essential. Stakeholders should implement regular reviews of freight performance metrics to anticipate market shifts and respond promptly.
 
