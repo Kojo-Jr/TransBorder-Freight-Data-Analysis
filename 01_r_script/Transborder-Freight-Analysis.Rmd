@@ -1055,7 +1055,7 @@ Overall Interpretation:
 
 1.  Shipment Weight and Freight Charges: Across all years, there is a consistently strong positive correlation (above 0.89), with the strongest in 2024 (0.91). This indicates that shipment weight is a critical determinant of freight charges.
 
-2.  Freight Value and Shipment Weight: The correlation is generally moderate, ranging from 0.40 in 2020 to a peak of 0.64 in 2022 and then slightly declining afterward. This suggests that heavier shipments tend to have higher values, but the relationship is not as strong or consistent as with freight charges.
+2.  Freight Value and Shipment Weight: The correlation is generally moderate, ranging from 0.40 in 2020 to a peak of 0.64 in 2022 and then slightly declining afterwards. This suggests that heavier shipments tend to have higher values, but the relationship is not as strong or consistent as with freight charges.
 
 3.  Freight Value and Freight Charges: The correlation is moderate across all years, ranging from 0.45 to 0.64, indicating that while higher-value shipments often result in higher charges, other factors also contribute.
 
