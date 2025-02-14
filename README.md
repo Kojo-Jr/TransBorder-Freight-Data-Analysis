@@ -41,6 +41,7 @@ The analysis follows the **CRISP-DM** framework:
 
 ## Tools
 - **RStudio**:Data Cleaning, Data analysis and visualisation.
+- **Power BI**: Visualisation and Dashboarding.
 - **Git**: Version control.
 
 ## Outcomes
