@@ -1,4 +1,4 @@
-# Trans-border Freight Data Analysis
+# Transborder Freight Data Analysis
 
 This project analyses transportation data from the **Bureau of Transportation Statistics (BTS)** to uncover insights into cross-border freight's efficiency, safety and environmental impacts across road, rail, air and water modes.
 
