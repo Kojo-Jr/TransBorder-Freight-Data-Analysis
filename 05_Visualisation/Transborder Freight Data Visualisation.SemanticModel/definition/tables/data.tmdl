@@ -1,0 +1,211 @@
+table data
+	lineageTag: 9c23228c-1187-4660-ab80-ba1c32415d24
+
+	measure FreightValueTrillions = SUM('data'[VALUE]) / 1e12
+		lineageTag: a3c83297-bde9-4b1f-ba8e-0309c6b21eeb
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure YearToYearGrowth =
+			
+			VAR CurrentYear = MAX(data[YEAR])
+			VAR CurrentValue = CALCULATE( SUM(data[VALUE]), data[YEAR] = CurrentYear )
+			VAR PrevValue = CALCULATE( SUM(data[VALUE]), data[YEAR] = CurrentYear - 1 )
+			RETURN
+			IF( PrevValue = 0, BLANK(), (CurrentValue - PrevValue) / PrevValue )
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: f29037ab-0c79-487d-b036-03fe31db98a7
+
+	measure AvgFreightCharge = AVERAGE(data[FREIGHT_CHARGES])
+		lineageTag: 29854d77-3c6d-4d3e-95a1-a4c5e2a54f9a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure FreightChargeEfficiency = ```
+			
+			    DIVIDE(
+			        SUM(data[FREIGHT_CHARGES]),
+			        SUM(data[SHIPWT])
+			    )
+			
+			```
+		lineageTag: 4f5de6e4-6328-42d3-a39b-dad3c89f06aa
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column TRDTYPE
+		dataType: string
+		lineageTag: d489a09d-3aca-4521-be67-993eac1dafea
+		summarizeBy: none
+		sourceColumn: TRDTYPE
+
+		annotation SummarizationSetBy = Automatic
+
+	column USASTATE
+		dataType: string
+		lineageTag: e0e270d1-a354-410c-9ab3-0cda9d922d30
+		summarizeBy: none
+		sourceColumn: USASTATE
+
+		annotation SummarizationSetBy = Automatic
+
+	column DEPE
+		dataType: string
+		lineageTag: 614bf5b7-c90e-480a-8f6e-e220a7eafe85
+		summarizeBy: none
+		sourceColumn: DEPE
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column DISAGMOT
+		dataType: string
+		lineageTag: be1ecec6-3c7e-499e-bb27-b5ad4c53469d
+		summarizeBy: none
+		sourceColumn: DISAGMOT
+
+		annotation SummarizationSetBy = Automatic
+
+	column MEXSTATE
+		dataType: string
+		lineageTag: f11fc5f4-2faf-4b00-9d23-cb433f0b4312
+		summarizeBy: none
+		sourceColumn: MEXSTATE
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CANPROV
+		dataType: string
+		lineageTag: 92ab44d8-691c-48b8-b250-87a5f7e16896
+		summarizeBy: none
+		sourceColumn: CANPROV
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column COUNTRY
+		dataType: string
+		lineageTag: 34f39d4c-bf06-4bf9-98d9-d53d656261d7
+		summarizeBy: none
+		sourceColumn: COUNTRY
+
+		annotation SummarizationSetBy = Automatic
+
+	column VALUE
+		dataType: int64
+		formatString: 0
+		lineageTag: e3c1a612-b19b-41b3-b7a3-44b6ed5a947b
+		summarizeBy: sum
+		sourceColumn: VALUE
+
+		annotation SummarizationSetBy = Automatic
+
+	column SHIPWT
+		dataType: int64
+		formatString: 0
+		lineageTag: 7521bde8-344e-41bf-af18-de6243ed4990
+		summarizeBy: sum
+		sourceColumn: SHIPWT
+
+		annotation SummarizationSetBy = Automatic
+
+	column FREIGHT_CHARGES
+		dataType: int64
+		formatString: 0
+		lineageTag: 0daf82f1-f9d9-4116-bbff-81f6b8dd9a8b
+		summarizeBy: sum
+		sourceColumn: FREIGHT_CHARGES
+
+		annotation SummarizationSetBy = Automatic
+
+	column DF
+		dataType: int64
+		formatString: 0
+		lineageTag: 95fc5869-3767-44fc-a1fa-aa1e4cd75e8f
+		summarizeBy: sum
+		sourceColumn: DF
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CONTCODE
+		dataType: string
+		lineageTag: fc833680-1041-4f9f-b7f6-308c9d5c8d18
+		summarizeBy: none
+		sourceColumn: CONTCODE
+
+		annotation SummarizationSetBy = Automatic
+
+	column MONTH
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 6a31e8b7-a3f8-4e38-a2b2-a7912bb16df3
+		summarizeBy: sum
+		sourceColumn: MONTH
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column YEAR
+		dataType: int64
+		formatString: 0
+		lineageTag: 4a66a2f0-612a-4da8-8a19-3bcdf2396418
+		summarizeBy: sum
+		sourceColumn: YEAR
+
+		annotation SummarizationSetBy = Automatic
+
+	column COMMODITY2
+		dataType: string
+		lineageTag: 6b86fb44-adbc-4a89-8f94-7c1bc79aeeef
+		summarizeBy: none
+		sourceColumn: COMMODITY2
+
+		annotation SummarizationSetBy = Automatic
+
+	column MONTHNAME = FORMAT(DATE(2000, VALUE(data[MONTH]), 1), "MMMM")
+		dataType: string
+		lineageTag: a8458b3f-c1dc-4fc5-8aae-8d414abb46ca
+		summarizeBy: none
+		isDataTypeInferred
+
+		annotation SummarizationSetBy = Automatic
+
+	partition data = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\omari\OneDrive\Documents\Power BI Projects\TransBorder Freight Analysis\data.csv"),[Delimiter=",", Columns=16, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"", Int64.Type}, {"TRDTYPE", type text}, {"USASTATE", type text}, {"DEPE", type text}, {"DISAGMOT", Int64.Type}, {"MEXSTATE", type text}, {"CANPROV", type text}, {"COUNTRY", Int64.Type}, {"VALUE", Int64.Type}, {"SHIPWT", Int64.Type}, {"FREIGHT_CHARGES", Int64.Type}, {"DF", Int64.Type}, {"CONTCODE", type text}, {"MONTH", Int64.Type}, {"YEAR", Int64.Type}, {"COMMODITY2", Int64.Type}}),
+				    #"Replaced Value" = Table.ReplaceValue(#"Changed Type","1","Export",Replacer.ReplaceText,{"TRDTYPE"}),
+				    #"Replaced Value1" = Table.ReplaceValue(#"Replaced Value","2","Import",Replacer.ReplaceText,{"TRDTYPE"}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Replaced Value1",{""}),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Removed Columns",{{"COUNTRY", type text}}),
+				    #"Replaced Value2" = Table.ReplaceValue(#"Changed Type1","1220","Canada",Replacer.ReplaceText,{"COUNTRY"}),
+				    #"Replaced Value3" = Table.ReplaceValue(#"Replaced Value2","2010","Mexico",Replacer.ReplaceText,{"COUNTRY"}),
+				    #"Changed Type2" = Table.TransformColumnTypes(#"Replaced Value3",{{"DISAGMOT", type text}}),
+				    #"Replaced Value4" = Table.ReplaceValue(#"Changed Type2","1","Vessel",Replacer.ReplaceText,{"DISAGMOT"}),
+				    #"Replaced Value5" = Table.ReplaceValue(#"Replaced Value4","3","Air",Replacer.ReplaceText,{"DISAGMOT"}),
+				    #"Replaced Value6" = Table.ReplaceValue(#"Replaced Value5","4","Mail (U.S. Postal Service)",Replacer.ReplaceText,{"DISAGMOT"}),
+				    #"Replaced Value7" = Table.ReplaceValue(#"Replaced Value6","5","Truck",Replacer.ReplaceText,{"DISAGMOT"}),
+				    #"Replaced Value8" = Table.ReplaceValue(#"Replaced Value7","6","Rail",Replacer.ReplaceText,{"DISAGMOT"}),
+				    #"Replaced Value9" = Table.ReplaceValue(#"Replaced Value8","7","Pipeline",Replacer.ReplaceText,{"DISAGMOT"}),
+				    #"Replaced Value10" = Table.ReplaceValue(#"Replaced Value9","8","Other",Replacer.ReplaceText,{"DISAGMOT"}),
+				    #"Replaced Value11" = Table.ReplaceValue(#"Replaced Value10","9","Foreign Trade Zones (FTZs)",Replacer.ReplaceText,{"DISAGMOT"}),
+				    #"Filtered Rows" = Table.SelectRows(#"Replaced Value11", each true),
+				    #"Changed Type3" = Table.TransformColumnTypes(#"Filtered Rows",{{"COMMODITY2", type text}})
+				in
+				    #"Changed Type3"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+
