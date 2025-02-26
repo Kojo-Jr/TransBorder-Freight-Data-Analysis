@@ -1,4 +1,9 @@
 # Transborder Freight Data Analysis
+Transportation systems form the backbone of modern economies, facilitating the movement of goods, services and people across cities, states and nations. They are vital for commerce, tourism and daily living, directly impacting on economic productivity and societal well-being. As transportation networks grow in complexity, so do the challenges they face ranging from safety concerns to inefficiencies and sustainability issues.
+
+The **Bureau of Transportation Statistics (BTS)**, a branch of the U.S. Department of Transportation, serves as a vital resource in tackling these challenges. It provides comprehensive and reliable data on multiple dimensions of transportation systems, including passenger travel, freight movement, safety incidents, infrastructure capacity and environmental impacts. This wealth of data enables policymakers, transportation agencies and businesses to make informed decisions to enhance transportation systems for the public good.
+
+Despite significant advancements, challenges like safety, congestion, infrastructure stress, environmental impact and economic disruptions persist. The Bureau's data encompasses a range of transportation modes, including road, rail, air and water, and covers diverse metrics.
 
 This project analyses transportation data from the **Bureau of Transportation Statistics (BTS)** to uncover insights into cross-border freight's efficiency, safety and environmental impacts across road, rail, air and water modes.
 
