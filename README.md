@@ -268,25 +268,27 @@ Both trade types exhibit outliers, individual points that fall outside the whisk
 ## Confirmatory Data Analysis
 
 Hypotheses:
+
 •Null Hypothesis (H₀): Freight value has no effect on trade type.
+
 •Alternative Hypothesis (H₁): Freight value affects trade type.
+
 Variables:
+
 •Dependent variable (y): Trade type
+
 •Independent variable (x): Freight value
+
 •Significance Level (α): 0.05
 
 Analysis:
-A logistic regression was performed with trade type as the dependent variable and freight value
-as the independent variable. The model produced the following coefficients:
-•
-Intercept:
-o Estimate: -0.069606
-•
-Freight Value (VALUE):
-o Estimate: 0.00000000414899 (approximately 4.15e-09)
+A logistic regression was performed with trade type as the dependent variable and freight value as the independent variable. The model produced the following coefficients:
 
-Statistical significance:
-Both coefficients are statistically significant (p values are essentially 0, i.e. < 2e-16)
+Intercept: Estimate: -0.069606
+
+Freight Value (VALUE): Estimate: 0.00000000414899 (approximately 4.15e-09)
+
+Statistical significance: Both coefficients are statistically significant (p values are essentially 0, i.e. < 2e-16)
 
 Interpretation:
 Significance of VALUE: The freight value is a statistically significant predictor of trade type. Despite the very small coefficient (due to the scale of VALUE), the extremely low p-value indicates that the relationship is highly unlikely to be due to random chance.
@@ -294,8 +296,7 @@ Significance of VALUE: The freight value is a statistically significant predicto
 Effect Size: Because VALUE is measured in dollars, its coefficient (approximately 4.15e-09 per dollar) might seem negligible at first glance. However, if changes are considered on a larger scale 10(e.g., per million dollars), the effect becomes more interpretative. For example, a one million dollar increase in freight value would increase the log-odds of the trade type by about 0.00415.
 
 #### Conclusion:
-Given that the freight value coefficient is statistically significant (p < 0.05), we reject the null hypoth-
-esis (H₀) and conclude that freight value does, affect trade type.
+Given that the freight value coefficient is statistically significant (p < 0.05), we reject the null hypothesis (H₀) and conclude that freight value does, affect trade type.
 
 
 
