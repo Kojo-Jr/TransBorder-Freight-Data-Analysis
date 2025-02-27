@@ -361,3 +361,9 @@ specific imputation methods to reduce bias.
 - Insights into freight trends and inefficiencies.
 - Strategies for sustainability, safety and system performance improvement.
 - Data visualisations for effective communication.
+
+## Links
+### Medium 
+https://medium.com/@omarieben7/refining-raw-data-how-data-quality-transformed-my-freight-transportation-analysis-a1ff004eed40
+https://medium.com/@omarieben7/the-art-of-handling-missing-values-a-nuanced-approach-to-freight-data-analysis-95418fc49e5a
+https://medium.com/@omarieben7/the-analysts-toolkit-how-r-and-power-bi-transformed-my-freight-data-into-actionable-insights-1bb69953bc6a
